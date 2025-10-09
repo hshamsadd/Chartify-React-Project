@@ -13,6 +13,7 @@ const SearchResults = () => {
   const { playOrPauseThisSong } = useSong();
 
   useEffect(() => {
+    console.log("SearchResults useEffect: query =", query);
     if (!query.trim()) {
       setResults(null);
       return;
