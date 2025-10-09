@@ -13,7 +13,6 @@ const SearchResults = () => {
   const { playOrPauseThisSong } = useSong();
 
   useEffect(() => {
-    console.log("SearchResults useEffect: query =", query);
     if (!query.trim()) {
       setResults(null);
       return;
@@ -44,6 +43,9 @@ const SearchResults = () => {
     event.preventDefault();
     event.stopPropagation();
 
+    // Add path for playing
+    track.path = track.preview;
+
     const artistData = {
       name: track.artist.name,
       tracks: [track],
@@ -63,7 +65,7 @@ const SearchResults = () => {
             className="flex items-center justify-between p-4 hover:bg-[#2a2a2a] rounded-lg transition-colors group"
           >
             <Link
-              to={`/artist/${item.artist.id}`}
+              to={`/artist/${item.artistId}`}
               className="flex items-center flex-1 min-w-0"
             >
               <img

@@ -9,14 +9,11 @@ const Search = () => {
   const wasSearchingRef = useRef(false);
 
   useEffect(() => {
-    console.log("Search useEffect: query =", query);
     if (query.trim()) {
       wasSearchingRef.current = true;
-      console.log("Navigating to search with query:", query.trim());
       navigate(`/search?q=${encodeURIComponent(query.trim())}`);
     } else if (wasSearchingRef.current) {
       wasSearchingRef.current = false;
-      console.log("Navigating back");
       navigate("/");
     }
   }, [query, navigate]);

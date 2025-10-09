@@ -35,7 +35,13 @@ const fetchJson = async (url) => {
   }
 };
 
-export { fetchJson };
+export {
+  fetchJson,
+  normalizeDeezerTrack,
+  normalizeDeezerArtist,
+  normalizeDeezerAlbum,
+  normalizeDeezerPlaylist,
+};
 
 const normalizeDeezerTrack = (track) => ({
   id: track.id,
@@ -54,6 +60,23 @@ const normalizeDeezerArtist = (artist) => ({
   name: artist.name,
   picture: artist.picture_medium,
   nb_fan: artist.nb_fan,
+});
+
+const normalizeDeezerAlbum = (album) => ({
+  id: album.id,
+  title: album.title,
+  artist: album.artist.name,
+  cover: album.cover_medium,
+  release_date: album.release_date,
+});
+
+const normalizeDeezerPlaylist = (playlist) => ({
+  id: playlist.id,
+  title: playlist.title,
+  description: playlist.description,
+  cover: playlist.picture_medium,
+  creator: playlist.creator.name,
+  nb_tracks: playlist.nb_tracks,
 });
 
 export const getTrack = async (trackId) => {
