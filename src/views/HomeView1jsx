@@ -1,0 +1,25 @@
+import React from "react";
+import CustomCarousel from "../components/CustomCarousel.jsx";
+import useChartData from "../hooks/useChartData.js";
+
+export const HomeView = () => {
+  const { loading, error, topPlaylistData } = useChartData();
+
+  if (loading) return <p>Loading...</p>;
+  if (error) return <p className="text-red-500">{error}</p>;
+
+  return (
+    <div className="max-w-[1500px] mx-auto">
+      {topPlaylistData.length > 0 && (
+        <div className="mt-8 min-w-[800px]">
+          <CustomCarousel
+            category="Popular playlist🔥"
+            data={topPlaylistData}
+          />
+        </div>
+      )}
+    </div>
+  );
+};
+
+export default HomeView;

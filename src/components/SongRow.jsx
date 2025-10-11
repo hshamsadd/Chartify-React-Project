@@ -25,7 +25,9 @@ const SongRow = ({ track, artistData }) => {
   const [isTrackTime, setIsTrackTime] = useState("00:00");
 
   useEffect(() => {
-    if (track) {
+    console.log("SongRow received track:", track); // Add this
+    if (track && track.path) {
+      console.log("Track has path:", track.path); // And this
       const audioMeta = new Audio(track.path);
       audioMeta.addEventListener("loadedmetadata", () => {
         const duration = audioMeta.duration;
@@ -33,6 +35,8 @@ const SongRow = ({ track, artistData }) => {
         const seconds = Math.floor(duration % 60);
         setIsTrackTime(minutes + ":" + seconds.toString().padStart(2, "0"));
       });
+    } else {
+      console.log("Track missing path!"); // Add this too
     }
   }, [track]);
 
@@ -113,7 +117,7 @@ const SongRow = ({ track, artistData }) => {
                 : "text-[#d4d4d4]"
             }`}
           >
-            {track.id}. {track.name}
+            {track.name}
           </div>
         )}
       </div>

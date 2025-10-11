@@ -2,69 +2,35 @@ import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import { MdPlayArrow, MdFavoriteBorder, MdMoreHoriz } from "react-icons/md";
 import { useSong } from "../context/SongContext.jsx";
-import routeForSlide from "../utils/routeForSlide.js";
+import HomeView from "../views/HomeView.jsx";
+
 const SliderItem = ({ slide }) => {
   const [isHover, setIsHover] = useState(false);
   const { playOrPauseThisSong } = useSong();
 
   const handlePlayClick = (e) => {
-    e.preventDefault();
-    e.stopPropagation();
+    e.preventDefault(); // Prevent navigation
+    e.stopPropagation(); // Prevent event bubbling
 
-    // If this slide is a playlist/collection with tracks
-    if (slide.tracks && slide.tracks.length > 0) {
-      playOrPauseThisSong(slide, slide.tracks[0]);
-      return;
-    }
+    // Create playlist data structure for playing
+    const playlistData = {
+      name: slide.title,
+      tracks: slide.tracks || [], // use full track list if available
+    };
 
-    // If this slide is a single track (from normalizeTopChartTrack)
-    const isTrack = !!(slide.path || slide.preview || slide.title);
-    if (isTrack) {
-      const singleTrack = {
-        ...slide,
-        name: slide.name || slide.title, // player expects name
-        path: slide.path || slide.preview || null, // audio preview
-        cover:
-          slide.cover ||
-          slide.picture ||
-          slide.album?.cover ||
-          slide.album?.cover_medium ||
-          null,
-        albumCover:
-          slide.album?.cover ||
-          slide.album?.cover_medium ||
-          slide.cover ||
-          slide.picture ||
-          null,
-      };
-      if (!singleTrack.path) return; // no playable preview
-
-      const context = {
-        name: slide.artist?.name || "Top Tracks",
-        tracks: [singleTrack],
-      };
-
-      playOrPauseThisSong(context, singleTrack);
+    if (playlistData.tracks.length > 0) {
+      playOrPauseThisSong(playlistData, playlistData.tracks[0]); // play first track
     }
   };
 
-  // Determine display info based on slide type
-  const title = slide.title || slide.song || "Unknown";
-  const creator =
-    slide.artist?.name || slide.creator?.name || slide.artist || "Unknown";
-  const releasedOn = slide.release_date || slide.releasedOn || "Unknown";
-  const imgUrl =
-    slide.cover || slide.picture || slide.url || "/images/default.png";
-
   return (
     <div className="pl-8">
-      <Link
-        to={routeForSlide(slide)}
-        className="cursor-pointer"
-        onMouseEnter={() => setIsHover(true)}
-        onMouseLeave={() => setIsHover(false)}
-      >
-        <div className="relative">
+      <Link to={`/playlist/${slide.id}`} className="cursor-pointer">
+        <div
+          className="relative"
+          onMouseEnter={() => setIsHover(true)}
+          onMouseLeave={() => setIsHover(false)}
+        >
           <div
             className={`absolute w-full h-full bg-black z-10 rounded-md transition ${
               isHover
@@ -116,16 +82,22 @@ const SliderItem = ({ slide }) => {
             src="/images/deezer-sound-icon.png"
             alt="Deezer Sound"
           />
-          <img className="rounded-md aspect-square" src={imgUrl} alt={title} />
+          <img
+            className="rounded-md aspect-square"
+            src={slide.url}
+            alt={slide.song}
+          />
         </div>
 
         <div className="text-white text-left mt-2">
-          <div className="text-sm hover:underline cursor-pointer">{title}</div>
+          <div className="text-sm hover:underline cursor-pointer">
+            {slide.song}
+          </div>
           <div className="text-[13px] flex hover:underline text-[#858590] pt-0.5">
-            by {creator}
+            by {slide.creator}
           </div>
           <div className="text-[11px] pt-0.5 text-[#858590]">
-            Released on {releasedOn}
+            Released on {slide.releasedOn}
           </div>
         </div>
       </Link>

@@ -1,22 +1,39 @@
 import React, { useState, useRef, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { MdSearch } from "react-icons/md";
 
 const Search = () => {
   const [query, setQuery] = useState("");
   const navigate = useNavigate();
+  const location = useLocation();
   const inputRef = useRef(null);
+  const timeoutRef = useRef(null);
   const wasSearchingRef = useRef(false);
 
   useEffect(() => {
+    if (!location.pathname.startsWith("/search")) {
+      setQuery("");
+    }
+  }, [location.pathname]);
+
+  useEffect(() => {
+    if (timeoutRef.current) clearTimeout(timeoutRef.current);
     if (query.trim()) {
       wasSearchingRef.current = true;
-      navigate(`/search?q=${encodeURIComponent(query.trim())}`);
-    } else if (wasSearchingRef.current) {
+      timeoutRef.current = setTimeout(() => {
+        navigate(`/search?q=${encodeURIComponent(query.trim())}`);
+      }, 500);
+    } else if (
+      wasSearchingRef.current &&
+      location.pathname.startsWith("/search")
+    ) {
       wasSearchingRef.current = false;
       navigate("/");
     }
-  }, [query, navigate]);
+    return () => {
+      if (timeoutRef.current) clearTimeout(timeoutRef.current);
+    };
+  }, [query, navigate, location.pathname]);
 
   return (
     <div className="relative">

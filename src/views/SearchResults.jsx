@@ -65,7 +65,7 @@ const SearchResults = () => {
             className="flex items-center justify-between p-4 hover:bg-[#2a2a2a] rounded-lg transition-colors group"
           >
             <Link
-              to={`/artist/${item.artistId}`}
+              to={item.artist?.id ? `/artist/${item.artist.id}` : "#"}
               className="flex items-center flex-1 min-w-0"
             >
               <img

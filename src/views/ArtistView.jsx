@@ -15,6 +15,9 @@ import * as musicApi from "../api/music.js";
 
 const ArtistView = () => {
   const { id } = useParams();
+  if (!id || id === "undefined") {
+    return <div>Invalid artist ID</div>;
+  }
   const {
     isPlaying,
     currentTrack,
@@ -57,7 +60,10 @@ const ArtistView = () => {
           if (chartData.artists && chartData.artists.length > 0) {
             const topArtist = chartData.artists[0];
             console.log("ArtistView: Using top artist from chart:", topArtist);
-            const topTracks = await musicApi.getArtistTopTracks(topArtist.id);
+            const topTracks = await musicApi.getArtistTopTracks(
+              topArtist.id,
+              20
+            );
             console.log("ArtistView: Top tracks:", topTracks);
             setArtistData({
               name: topArtist.name,
