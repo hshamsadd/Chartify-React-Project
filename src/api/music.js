@@ -186,13 +186,16 @@ const normalizeDeezerTrack = (track) => ({
     cover_medium: track.album?.cover_medium,
     cover_big: track.album?.cover_big,
     cover_xl: track.album?.cover_xl,
+    release_date: track.album?.release_date || null,
   },
   duration: track.duration,
   rank: track.rank,
   explicit: track.explicit_lyrics,
   preview: track.preview,
   path: track.preview, // used by the player
+  position: track.position,
   cover: track.album?.cover_medium || track.artist?.picture_medium || null,
+  release_date: track.release_date || null,
 });
 
 const normalizeDeezerPlaylist = (playlist) => ({
@@ -218,8 +221,47 @@ const normalizeDeezerPlaylist = (playlist) => ({
   tracks: playlist.tracks?.data?.map(normalizeDeezerTrack) || [],
 });
 
-// ---------------- Top Chart Fetchers ----------------
+// ---------------- Genre Normalizers ----------------
 
+export const normalizeGenre = (genre) => ({
+  id: genre.id,
+  name: genre.name,
+  cover:
+    genre.picture_medium ||
+    genre.picture_big ||
+    genre.picture_small ||
+    genre.picture,
+  type: genre.type,
+});
+
+export const normalizeGenreArtist = (artist) => ({
+  id: artist.id,
+  name: artist.name,
+  cover:
+    artist.picture_medium ||
+    artist.picture_big ||
+    artist.picture_small ||
+    artist.picture,
+  tracklist: artist.tracklist,
+  radio: artist.radio,
+  type: artist.type,
+});
+
+export const normalizeTopChartRadio = (radio) => ({
+  id: radio.id,
+  title: radio.title,
+  cover:
+    radio.picture_medium ||
+    radio.picture_big ||
+    radio.picture_small ||
+    radio.picture,
+  tracklist: radio.tracklist,
+  type: radio.type,
+});
+
+// ---------------- Genre Normalizers ----------------
+
+// ---------------- Top Chart Fetchers ----------------
 // Fetch the full chart using Top Chart normalizers
 export const getChart = async () => {
   const data = await fetchJson(`${DEEZER_API_BASE}/chart`);
@@ -234,37 +276,42 @@ export const getChart = async () => {
 
 // Fetch only top tracks directly
 export const getTopTracks = async (limit = 10) => {
-  const data = await fetchJson(`${DEEZER_API_BASE}/chart`);
+  const data = await fetchJson(`${DEEZER_API_BASE}/chart/0/tracks`);
   if (!data?.tracks?.data) throw new Error("No top tracks found");
   return data.tracks.data.slice(0, limit).map(normalizeTopChartTrack);
 };
 
 // Fetch only top albums directly
 export const getTopAlbums = async (limit = 10) => {
-  const data = await fetchJson(`${DEEZER_API_BASE}/chart`);
+  const data = await fetchJson(`${DEEZER_API_BASE}/chart/0/albums`);
   if (!data?.albums?.data) throw new Error("No top albums found");
   return data.albums.data.slice(0, limit).map(normalizeTopChartAlbum);
 };
 
 // Fetch only top artists directly
 export const getTopArtists = async (limit = 10) => {
-  const data = await fetchJson(`${DEEZER_API_BASE}/chart`);
+  const data = await fetchJson(`${DEEZER_API_BASE}/chart/0/artists`);
   if (!data?.artists?.data) throw new Error("No top artists found");
   return data.artists.data.slice(0, limit).map(normalizeTopChartArtist);
 };
 
 // Fetch only top playlists directly
 export const getTopPlaylists = async (limit = 10) => {
-  const data = await fetchJson(`${DEEZER_API_BASE}/chart`);
+  const data = await fetchJson(`${DEEZER_API_BASE}/chart/0/playlists`);
   if (!data?.playlists?.data) throw new Error("No top playlists found");
   return data.playlists.data.slice(0, limit).map(normalizeTopChartPlaylist);
 };
 
 // Fetch only top podcasts directly
-export const getTopPodcasts = async (limit = 10) => {
-  const data = await fetchJson(`${DEEZER_API_BASE}/chart`);
+const getTopPodcasts = async (limit = 24) => {
+  const data = await fetchJson(`${DEEZER_API_BASE}/chart/podcasts`);
   if (!data?.podcasts?.data) throw new Error("No top podcasts found");
   return data.podcasts.data.slice(0, limit).map(normalizeTopChartPodcast);
+};
+
+const getPodcast = async (podcastId) => {
+  const data = await fetchJson(`${DEEZER_API_BASE}/podcast/${podcastId}`);
+  return normalizeTopChartPodcast(data);
 };
 
 // Fetch playlist details by ID
@@ -274,6 +321,36 @@ export const getPlaylist = async (playlistId) => {
   return normalizeDeezerPlaylist(data);
 };
 
+// ---------------- Genre Fetchers ----------------
+// 1️⃣ Get all genres
+export const getGenres = async () => {
+  const data = await fetchJson(`${DEEZER_API_BASE}/genre`);
+  return data.data?.map(normalizeGenre) || [];
+};
+
+// 2️⃣ Get genre details by ID
+export const getGenre = async (genreId) => {
+  if (!genreId) throw new Error("Genre ID is required");
+  const data = await fetchJson(`${DEEZER_API_BASE}/genre/${genreId}`);
+  return normalizeGenre(data);
+};
+
+// 3️⃣ Get top artists & radios by genre
+export const getGenreTop = async (genreId) => {
+  if (!genreId) throw new Error("Genre ID is required");
+
+  const [artists, radios] = await Promise.all([
+    fetchJson(`${DEEZER_API_BASE}/genre/${genreId}/artists`),
+    fetchJson(`${DEEZER_API_BASE}/genre/${genreId}/radios`),
+  ]);
+
+  return {
+    artists: artists.data?.map(normalizeGenreArtist) || [],
+    radios: radios.data?.map(normalizeTopChartRadio) || [],
+  };
+};
+// ---------------- Genre Fetchers ----------------
+
 // ---------------- Exports ----------------
 export {
   fetchJson,
@@ -282,4 +359,8 @@ export {
   normalizeTopChartAlbum,
   normalizeTopChartPlaylist,
   normalizeTopChartPodcast,
+  normalizeDeezerTrack,
+  normalizeDeezerPlaylist,
+  getPodcast, // ✅ add this
+  getTopPodcasts, // optional: if you want top podcasts fetcher
 };
