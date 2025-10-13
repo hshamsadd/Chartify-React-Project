@@ -12,7 +12,9 @@ import SideMenuItem from "./components/SideMenuItem.jsx";
 import MusicPlayer from "./components/MusicPlayer.jsx";
 import Search from "./components/Search.jsx";
 import HomeView from "./views/HomeView.jsx";
+import TopTracksView from "./views/TopTracksView.jsx";
 import ArtistView from "./views/ArtistView.jsx";
+import AlbumView from "./views/AlbumView.jsx";
 import PlaylistView from "./views/PlaylistView.jsx";
 import SearchResults from "./views/SearchResults.jsx";
 import GenresView from "./views/GenresView.jsx";
@@ -109,12 +111,15 @@ const AppContent = () => {
         <div className="fixed w-[calc(100%-240px)] h-[calc(100%-56px)] ml-[240px] mt-[56px] overflow-x-auto">
           <Routes>
             <Route path="/charts" element={<HomeView />} />
+            <Route path="/track/:id" element={<TopTracksView />} />
             <Route path="/artist/:id?" element={<ArtistView />} />
+            <Route path="/album/:id" element={<AlbumView />} />
             <Route path="/playlist/:id" element={<PlaylistView />} />
             <Route path="/genres" element={<GenresView />} />
             <Route path="/genre/:id" element={<GenreView />} />
             <Route path="/podcasts" element={<PodcastsView />} />
             <Route path="/podcasts/:podcastId" element={<PodcastView />} />
+            <Route path="/podcast/:podcastId" element={<PodcastView />} />
             <Route path="/search" element={<SearchResults />} />
           </Routes>
         </div>

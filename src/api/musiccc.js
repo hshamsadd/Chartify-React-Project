@@ -119,41 +119,6 @@ const normalizeDeezerAlbum = (album) => ({
     picture: album.artist?.picture_medium,
   },
   tracks: album.tracks?.data?.map(normalizeTopChartTrack) || [],
-  // id: album.id,
-  // title: album.title,
-  // artist: {
-  //   id: album.artist?.id,
-  //   name: album.artist?.name,
-  //   picture: album.artist?.picture_medium,
-  // },
-  // cover: {
-  //   small: album.cover_small,
-  //   medium: album.cover_medium,
-  //   large: album.cover_big,
-  //   xl: album.cover_xl,
-  // },
-  // genre: album.genres?.data?.[0]?.name || null,
-  // label: album.label,
-  // releaseDate: album.release_date,
-  // totalTracks: album.nb_tracks,
-  // duration: album.duration,
-  // fans: album.fans,
-  // explicit: album.explicit_lyrics,
-  // link: album.link,
-  // tracks:
-  //   album.tracks?.data?.map((track) => ({
-  //     id: track.id,
-  //     title: track.title,
-  //     duration: track.duration,
-  //     preview: track.preview,
-  //     link: track.link,
-  //     explicit: track.explicit_lyrics,
-  //     rank: track.rank,
-  //     artist: {
-  //       id: track.artist?.id,
-  //       name: track.artist?.name,
-  //     },
-  //   })) || [],
 });
 
 const normalizeTopChartAlbum = (album) => ({

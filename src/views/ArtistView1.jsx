@@ -9,6 +9,7 @@ import {
   MdFavoriteBorder,
   MdSchedule,
 } from "react-icons/md";
+import artist from "../artist.json";
 import { useSong } from "../context/SongContext.jsx";
 import * as musicApi from "../api/music.js";
 
@@ -25,37 +26,69 @@ const ArtistView = () => {
     playFromFirst,
   } = useSong();
 
-  const [artistData, setArtistData] = useState(null);
+  const [artistData, setArtistData] = useState(artist);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState("");
 
   useEffect(() => {
     const fetchArtistData = async () => {
-      if (!id || id === "undefined") return;
-
-      setLoading(true);
       try {
-        const artist = await musicApi.getArtistWithTopTracks(id, 10);
-
-        setArtistData({
-          name: artist.name,
-          albumCover: artist.picture_medium || artist.picture,
-          nb_fan: artist.nb_fan,
-          tracks: artist.top_tracks.map((t, index) => ({
-            ...t,
-            name: t.title,
-            id: index + 1,
-            lyrics: false,
-          })),
-        });
-      } catch (err) {
-        console.error("Failed to fetch artist with top tracks:", err);
-        setError("Failed to load artist data.");
+        if (id) {
+          // Fetch specific artist by ID
+          console.log("ArtistView: Fetching artist by ID:", id);
+          const artistDetails = await musicApi.getArtist(id);
+          const topTracks = await musicApi.getArtistTopTracks(id);
+          console.log("ArtistView: Artist details:", artistDetails);
+          console.log("ArtistView: Top tracks:", topTracks);
+          setArtistData({
+            name: artistDetails.name,
+            albumCover: artistDetails.picture_medium || artistDetails.picture,
+            nb_fan: artistDetails.nb_fan,
+            tracks: topTracks.map((t, index) => ({
+              ...t,
+              name: t.title,
+              id: index + 1,
+              lyrics: false,
+            })),
+          });
+          console.log("ArtistView: Set specific artist data successfully");
+        } else {
+          // No ID provided, show top artist from chart
+          console.log(
+            "ArtistView: No artist ID provided, using top artist from chart"
+          );
+          const chartData = await musicApi.getChart();
+          if (chartData.artists && chartData.artists.length > 0) {
+            const topArtist = chartData.artists[0];
+            console.log("ArtistView: Using top artist from chart:", topArtist);
+            const topTracks = await musicApi.getArtistTopTracks(
+              topArtist.id,
+              20
+            );
+            console.log("ArtistView: Top tracks:", topTracks);
+            setArtistData({
+              name: topArtist.name,
+              albumCover: topArtist.picture_medium || topArtist.picture,
+              nb_fan: topArtist.nb_fan,
+              tracks: topTracks.map((t, index) => ({
+                ...t,
+                name: t.title,
+                id: index + 1,
+                lyrics: false,
+              })),
+            });
+            console.log("ArtistView: Set dynamic artist data successfully");
+          } else {
+            // Fallback to static data
+            console.log("ArtistView: No chart data, using static fallback");
+          }
+        }
+      } catch (error) {
+        console.error("ArtistView: Failed to fetch artist data:", error);
+        // Keep static fallback
       } finally {
         setLoading(false);
       }
     };
-
     fetchArtistData();
   }, [id]);
 
@@ -66,10 +99,6 @@ const ArtistView = () => {
     }
     playFromFirst();
   };
-
-  if (loading) return <div className="text-white p-8">Loading artist...</div>;
-  if (error) return <div className="text-red-500 p-8">{error}</div>;
-  if (!artistData) return null;
 
   return (
     <>
@@ -90,7 +119,7 @@ const ArtistView = () => {
             <div className="text-[#bfbfbf] text-[12px] py-1.5 font-light">
               {artistData.nb_fan
                 ? `${artistData.nb_fan.toLocaleString()} fans`
-                : "Unknown fans"}
+                : "167,026 fans"}
             </div>
 
             <div className="flex gap-4 items-center justify-start bottom-0 mb-1.5">
@@ -197,7 +226,6 @@ const ArtistView = () => {
           )}
         </ul>
       </div>
-
       <div className="mb-40"></div>
     </>
   );

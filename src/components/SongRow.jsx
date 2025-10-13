@@ -104,8 +104,21 @@ const SongRow = ({ track, artistData }) => {
           <img
             width="37"
             className="border border-[#494949]"
-            src={artistData.albumCover}
-            alt="Album cover"
+            src={
+              // Track-specific album covers
+              artistData.albumCover?.medium ||
+              artistData.albumCover?.large ||
+              artistData.cover ||
+              // Fallback to track's album cover if available
+              artistData.albumCover ||
+              track.album?.cover_medium?.medium ||
+              track.album?.cover_big?.large ||
+              track.album?.cover_small?.small ||
+              track.album?.cover_xl?.xl ||
+              // Fallback: a default image if nothing is found
+              "/images/default-album.png"
+            }
+            alt={track.name || "Album cover"}
           />
         </div>
 

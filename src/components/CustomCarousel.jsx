@@ -42,7 +42,6 @@ const CustomCarousel = ({ category, data, type }) => {
     <div>
       <div className="flex justify-between pb-5 ml-8 mr-6">
         <Link
-          to={getSlideLink(data[0])} // Link to the first item's page. But ideally should link to category page.
           onMouseEnter={() => setIsHoverCategory(true)}
           onMouseLeave={() => setIsHoverCategory(false)}
           className={`flex items-center font-semibold text-xl cursor-pointer ${
