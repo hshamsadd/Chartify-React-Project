@@ -5,7 +5,7 @@ import React, {
   useCallback,
   useMemo,
 } from "react";
-import artist from "../artist.json";
+import artist from "../singer.json";
 import * as musicApi from "../api/music.js";
 
 // Action types
@@ -16,8 +16,8 @@ const ACTIONS = {
   SET_CURRENT_TRACK: "SET_CURRENT_TRACK",
   SET_TRACK_TIME: "SET_TRACK_TIME",
   SET_CURRENT_VOLUME: "SET_CURRENT_VOLUME",
-  SET_IS_LYRICS: "SET_IS_LYRICS",
-  SET_LYRICS_POSITION: "SET_LYRICS_POSITION",
+  // SET_IS_LYRICS: "SET_IS_LYRICS",           // removed
+  // SET_LYRICS_POSITION: "SET_LYRICS_POSITION", // removed
   RESET_STATE: "RESET_STATE",
   LOAD_SONG: "LOAD_SONG",
 };
@@ -30,8 +30,8 @@ const initialState = {
   currentTrack: null,
   trackTime: null,
   currentVolume: 80,
-  isLyrics: false,
-  lyricsPosition: "0:00",
+  // isLyrics: false,          // removed
+  // lyricsPosition: "0:00",   // removed
 };
 
 // Load state from localStorage
@@ -60,8 +60,8 @@ const saveStateToStorage = (state) => {
       currentArtist: state.currentArtist,
       currentTrack: state.currentTrack,
       currentVolume: state.currentVolume,
-      isLyrics: state.isLyrics,
-      lyricsPosition: state.lyricsPosition,
+      // isLyrics: state.isLyrics,              // removed
+      // lyricsPosition: state.lyricsPosition,  // removed
     };
     localStorage.setItem("song-storage", JSON.stringify(stateToSave));
   } catch (error) {
@@ -95,12 +95,12 @@ const songReducer = (state, action) => {
     case ACTIONS.SET_CURRENT_VOLUME:
       newState = { ...state, currentVolume: action.payload };
       break;
-    case ACTIONS.SET_IS_LYRICS:
-      newState = { ...state, isLyrics: action.payload };
-      break;
-    case ACTIONS.SET_LYRICS_POSITION:
-      newState = { ...state, lyricsPosition: action.payload };
-      break;
+    // case ACTIONS.SET_IS_LYRICS:
+    //   newState = { ...state, isLyrics: action.payload };
+    //   break;
+    // case ACTIONS.SET_LYRICS_POSITION:
+    //   newState = { ...state, lyricsPosition: action.payload };
+    //   break;
     case ACTIONS.RESET_STATE:
       newState = {
         ...initialState,
@@ -291,15 +291,15 @@ export const SongProvider = ({ children }) => {
     (volume) => dispatch({ type: ACTIONS.SET_CURRENT_VOLUME, payload: volume }),
     []
   );
-  const setIsLyrics = useCallback(
-    (isLyrics) => dispatch({ type: ACTIONS.SET_IS_LYRICS, payload: isLyrics }),
-    []
-  );
-  const setLyricsPosition = useCallback(
-    (position) =>
-      dispatch({ type: ACTIONS.SET_LYRICS_POSITION, payload: position }),
-    []
-  );
+  // const setIsLyrics = useCallback(                 // removed
+  //   (isLyrics) => dispatch({ type: ACTIONS.SET_IS_LYRICS, payload: isLyrics }),
+  //   []
+  // );
+  // const setLyricsPosition = useCallback(           // removed
+  //   (position) =>
+  //     dispatch({ type: ACTIONS.SET_LYRICS_POSITION, payload: position }),
+  //   []
+  // );
   const resetState = useCallback(
     () => dispatch({ type: ACTIONS.RESET_STATE }),
     []
@@ -313,8 +313,8 @@ export const SongProvider = ({ children }) => {
       setCurrentTrack,
       setTrackTime,
       setCurrentVolume,
-      setIsLyrics,
-      setLyricsPosition,
+      // setIsLyrics,         // removed
+      // setLyricsPosition,   // removed
       resetState,
       loadSong,
       playOrPauseSong,
@@ -332,8 +332,8 @@ export const SongProvider = ({ children }) => {
       setCurrentTrack,
       setTrackTime,
       setCurrentVolume,
-      setIsLyrics,
-      setLyricsPosition,
+      // setIsLyrics,        // removed
+      // setLyricsPosition,  // removed
       resetState,
       loadSong,
       playOrPauseSong,

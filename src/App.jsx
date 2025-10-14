@@ -1,12 +1,6 @@
 import React, { useEffect } from "react";
-import {
-  BrowserRouter as Router,
-  Routes,
-  Route,
-  Link,
-  NavLink,
-} from "react-router-dom";
-import { MdNotifications } from "react-icons/md";
+import { BrowserRouter as Router, Routes, Route, Link } from "react-router-dom";
+import { MdOutlineNotificationsActive } from "react-icons/md";
 
 import SideMenuItem from "./components/SideMenuItem.jsx";
 import MusicPlayer from "./components/MusicPlayer.jsx";
@@ -21,25 +15,19 @@ import GenresView from "./views/GenresView.jsx";
 import GenreView from "./views/GenreView.jsx";
 import PodcastsView from "./views/PodcastsView.jsx";
 import PodcastView from "./views/PodcastView.jsx";
+import FavouritesView from "./views/FavouritesView.jsx";
+import { FavouritesProvider } from "./context/FavouritesContext.jsx";
 
 import { SongProvider, useSong } from "./context/SongContext.jsx";
 
 const AppContent = () => {
-  const {
-    isPlaying,
-    currentTrack,
-    isLyrics,
-    trackTime,
-    setPlaying,
-    setIsLyrics,
-    setTrackTime,
-  } = useSong();
+  const { currentTrack, setPlaying, setTrackTime } = useSong();
+  useSong();
 
   useEffect(() => {
     setPlaying(false);
-    setIsLyrics(false);
     setTrackTime("0:00");
-  }, [setPlaying, setIsLyrics, setTrackTime]);
+  }, [setPlaying, setTrackTime]);
 
   return (
     <Router>
@@ -54,11 +42,11 @@ const AppContent = () => {
           </div>
           <div className="flex items-center pr-10">
             <div className="mr-4 p-1 hover:bg-gray-600 rounded-full cursor-pointer">
-              <MdNotifications className="text-white" size={20} />
+              <MdOutlineNotificationsActive className="text-white" size={20} />
             </div>
             <img
               className="rounded-full w-[33px]"
-              src="https://yt3.ggpht.com/e9o-24_frmNSSVvjS47rT8qCHgsHNiedqgXbzmrmpsj6H1ketcufR1B9vLXTZRa30krRksPj=s88-c-k-c0x00ffffff-no-rj-mo"
+              src="https://www.citypng.com/public/uploads/preview/profile-user-round-white-icon-symbol-png-701751695033499brrbuebohc.png"
               alt="Profile"
             />
           </div>
@@ -110,7 +98,9 @@ const AppContent = () => {
         {/* Main Content */}
         <div className="fixed w-[calc(100%-240px)] h-[calc(100%-56px)] ml-[240px] mt-[56px] overflow-x-auto">
           <Routes>
+            <Route path="/" element={<HomeView />} />
             <Route path="/charts" element={<HomeView />} />
+            <Route path="/favourites" element={<FavouritesView />} />
             <Route path="/track/:id" element={<TopTracksView />} />
             <Route path="/artist/:id?" element={<ArtistView />} />
             <Route path="/album/:id" element={<AlbumView />} />
@@ -133,9 +123,11 @@ const AppContent = () => {
 
 const App = () => {
   return (
-    <SongProvider>
-      <AppContent />
-    </SongProvider>
+    <FavouritesProvider>
+      <SongProvider>
+        <AppContent />
+      </SongProvider>
+    </FavouritesProvider>
   );
 };
 

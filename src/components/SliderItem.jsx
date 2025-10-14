@@ -1,6 +1,7 @@
 import React, { useState } from "react";
-import { MdPlayArrow, MdFavoriteBorder, MdMoreHoriz } from "react-icons/md";
+import { MdPlayArrow } from "react-icons/md";
 import { useSong } from "../context/SongContext.jsx";
+import FavouriteButton from "./FavouriteButton.jsx";
 
 const SliderItem = ({ slide }) => {
   const [isHover, setIsHover] = useState(false);
@@ -52,6 +53,30 @@ const SliderItem = ({ slide }) => {
   const imgUrl =
     slide.cover || slide.picture || slide.url || "/images/default.png";
 
+  // infer a type for favourites
+  const resolvedType =
+    slide.type ||
+    (slide.preview || slide.path || slide.title
+      ? "track"
+      : slide.nb_tracks
+      ? "playlist"
+      : slide.picture && !slide.album
+      ? "artist"
+      : "album");
+
+  // Use a stable fallback id when slide.id is missing to make toggle reliable
+  const fav = {
+    id:
+      slide.id ??
+      slide.album?.id ??
+      slide.artist?.id ??
+      `${resolvedType}:${title}:${creator}`,
+    type: resolvedType,
+    title,
+    subtitle: creator,
+    image: imgUrl,
+  };
+
   return (
     <div
       className="pl-8 cursor-pointer"
@@ -72,38 +97,32 @@ const SliderItem = ({ slide }) => {
         >
           <MdPlayArrow size={27} />
         </div>
+
+        {/* Favourite button: identical circular shape, positioned bottom-right */}
         <div
-          className={`absolute z-50 bottom-3 left-[60px] rounded-full bg-white p-2 transition ${
+          className={`absolute z-50 bottom-3 right-3 rounded-full bg-white p-1.5 cursor-pointer transition w-10 h-10 flex items-center justify-center ${
             isHover
               ? "ease-in duration-150 bg-opacity-100"
               : "ease-out duration-150 bg-opacity-0"
           }`}
         >
-          <MdFavoriteBorder
-            className={`transition ${
-              isHover
-                ? "ease-in duration-150 opacity-100"
-                : "ease-out duration-150 opacity-0"
-            }`}
+          <FavouriteButton
+            fav={fav}
             size={23}
-          />
-        </div>
-        <div
-          className={`absolute z-50 bottom-3 left-[107px] rounded-full bg-white p-1.5 transition ${
-            isHover
-              ? "ease-in duration-150 bg-opacity-100"
-              : "ease-out duration-150 bg-opacity-0"
-          }`}
-        >
-          <MdMoreHoriz
-            className={`transition ${
+            className="p-0 m-0 bg-transparent border-0"
+            activeClassName={`transition ${
               isHover
                 ? "ease-in duration-150 opacity-100"
                 : "ease-out duration-150 opacity-0"
             }`}
-            size={27}
+            inactiveClassName={`transition ${
+              isHover
+                ? "ease-in duration-150 opacity-100"
+                : "ease-out duration-150 opacity-0"
+            }`}
           />
         </div>
+
         <img
           width="25"
           className="absolute z-40 right-0 bottom-0 pb-3 mr-3 contrast-[1.4] brightness-[1.1]"

@@ -28,7 +28,7 @@ const Search = () => {
       location.pathname.startsWith("/search")
     ) {
       wasSearchingRef.current = false;
-      navigate("/");
+      navigate("/charts");
     }
     return () => {
       if (timeoutRef.current) clearTimeout(timeoutRef.current);

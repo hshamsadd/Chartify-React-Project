@@ -1,23 +1,15 @@
 import React, { useState, useEffect } from "react";
-import {
-  MdMoreHoriz,
-  MdFavoriteBorder,
-  MdMic,
-  MdPlayArrow,
-  MdPause,
-} from "react-icons/md";
+import { MdMoreHoriz, MdPlayArrow, MdPause } from "react-icons/md";
 import { useSong } from "../context/SongContext.jsx";
+import FavouriteButton from "./FavouriteButton.jsx";
 
 const SongRow = ({ track, artistData }) => {
   const {
-    audio,
     isPlaying,
     currentTrack,
-    isLyrics,
     playOrPauseThisSong,
     loadSong,
     playOrPauseSong,
-    setIsLyrics,
   } = useSong();
 
   const [isHover, setIsHover] = useState(false);
@@ -40,16 +32,28 @@ const SongRow = ({ track, artistData }) => {
     }
   }, [track]);
 
-  const openLyrics = (track, artistData) => {
-    if (audio && !audio.paused && track.id === currentTrack?.id) {
-      setIsLyrics(true);
-    } else if (audio && audio.paused && track.id === currentTrack?.id) {
-      playOrPauseSong();
-      setIsLyrics(true);
-    } else {
-      playOrPauseThisSong(artistData, track);
-      setTimeout(() => setIsLyrics(true), 500);
-    }
+  // Build favourite payload (uses same image fallbacks as the row)
+  const coverForFav =
+    artistData.albumCover?.medium ||
+    artistData.albumCover?.large ||
+    artistData.cover ||
+    artistData.albumCover ||
+    track?.album?.cover_medium?.medium ||
+    track?.album?.cover_big?.large ||
+    track?.album?.cover_small?.small ||
+    track?.album?.cover_xl?.xl ||
+    "/images/default-album.png";
+
+  const fav = {
+    id:
+      track?.id ??
+      `${track?.name || "unknown"}-${
+        artistData?.artistName || artistData?.name || "unknown"
+      }`,
+    type: "track",
+    title: track?.name || track?.title || "Unknown",
+    subtitle: artistData?.artistName || artistData?.name || "Unknown Artist",
+    image: coverForFav,
   };
 
   return (
@@ -136,17 +140,15 @@ const SongRow = ({ track, artistData }) => {
       </div>
 
       <div className="flex items-center">
-        {track.lyrics && (
-          <div
-            onClick={() => openLyrics(track, artistData)}
-            className="rotate-45 rounded-full p-1.5 mr-3 hover:bg-[#979797] hover:bg-opacity-20 cursor-pointer"
-          >
-            <MdMic className="text-[#CCCCCC]" size={21} />
-          </div>
-        )}
-
+        {/* Favourite button kept intact */}
         <div className="rounded-full p-1.5 mr-3 hover:bg-[#979797] hover:bg-opacity-20 cursor-pointer">
-          <MdFavoriteBorder className="text-[#CCCCCC]" size={21} />
+          <FavouriteButton
+            fav={fav}
+            size={21}
+            className="p-0 m-0 bg-transparent border-0"
+            activeClassName="text-[#CCCCCC]"
+            inactiveClassName="text-[#CCCCCC]"
+          />
         </div>
 
         <div className="rounded-full p-1.5 hover:bg-[#979797] hover:bg-opacity-20 cursor-pointer">

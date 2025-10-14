@@ -6,10 +6,10 @@ import {
   MdPlayArrow,
   MdPause,
   MdMoreHoriz,
-  MdFavoriteBorder,
   MdSchedule,
 } from "react-icons/md";
 import { useSong } from "../context/SongContext.jsx";
+import FavouriteButton from "../components/FavouriteButton.jsx";
 import * as musicApi from "../api/music.js";
 
 const ArtistView = () => {
@@ -114,12 +114,17 @@ const ArtistView = () => {
                   </div>
                 )}
               </button>
-              <button
-                type="button"
+              {/* Keep the original wrapper styles; swap icon for FavouriteButton */}
+              <FavouriteButton
+                type="artist"
+                id={id}
+                title={artistData.name}
+                image={artistData.albumCover}
+                size={20}
                 className="rounded-full p-2 border border-[#52525D] hover:bg-[#2b2b30]"
-              >
-                <MdFavoriteBorder className="text-[#EAEAEA]" size={20} />
-              </button>
+                activeClassName="text-[#EAEAEA]"
+                inactiveClassName="text-[#EAEAEA]"
+              />
               <button
                 type="button"
                 className="rounded-full p-2 border border-[#52525D] hover:bg-[#2b2b30]"

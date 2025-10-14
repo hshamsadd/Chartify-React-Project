@@ -1,11 +1,5 @@
 import React, { useState, useEffect, useRef, useCallback } from "react";
 import {
-  MdShuffle,
-  MdFavoriteBorder,
-  MdMic,
-  MdAdd,
-  MdTune,
-  MdPictureInPictureAlt,
   MdPlayArrow,
   MdPause,
   MdSkipPrevious,
@@ -17,6 +11,56 @@ import {
 import MusicPlayerVolume from "./MusicPlayerVolume.jsx";
 import uniqolor from "uniqolor";
 import { useSong } from "../context/SongContext.jsx";
+import FavouriteButton from "./FavouriteButton.jsx";
+
+// Image resolver (only normalizes image/cover objects into a URL; no style changes)
+const getImageUrl = (...candidates) => {
+  const sizeOrder = ["medium", "large", "xl", "small"];
+
+  const extract = (c) => {
+    if (!c) return undefined;
+    if (typeof c === "string") return c;
+
+    // Common direct keys that may already be URL strings
+    for (const k of ["cover", "picture", "image", "albumCover", "url", "src"]) {
+      if (typeof c[k] === "string") return c[k];
+    }
+
+    // Deezer-style size maps: { small, medium, large, xl }
+    for (const k of sizeOrder) {
+      if (typeof c[k] === "string") return c[k];
+    }
+
+    // Deezer album keys may be string or nested objects
+    for (const k of ["cover_small", "cover_medium", "cover_big", "cover_xl"]) {
+      const v = c[k];
+      if (!v) continue;
+      const nested = extract(v);
+      if (nested) return nested;
+    }
+
+    // Sometimes nested under album/artist
+    for (const k of ["album", "artist"]) {
+      const v = c[k];
+      if (!v) continue;
+      const nested = extract(v);
+      if (nested) return nested;
+    }
+
+    // Fallback: first string value found
+    for (const v of Object.values(c)) {
+      if (typeof v === "string") return v;
+    }
+
+    return undefined;
+  };
+
+  for (const cand of candidates) {
+    const url = extract(cand);
+    if (url) return url;
+  }
+  return undefined;
+};
 
 const MusicPlayer = () => {
   const {
@@ -24,8 +68,6 @@ const MusicPlayer = () => {
     audio,
     currentTrack,
     currentArtist,
-    trackTime,
-    isLyrics,
     currentVolume,
     playOrPauseThisSong,
     prevSong,
@@ -180,6 +222,36 @@ const MusicPlayer = () => {
     return null;
   }
 
+  // Only resolve image URLs (no style/layout changes)
+  const favImage =
+    getImageUrl(
+      currentTrack?.albumCover,
+      currentTrack?.cover,
+      currentTrack?.album?.cover_medium,
+      currentTrack?.album?.cover_big,
+      currentTrack?.album?.cover_small,
+      currentTrack?.album?.cover_xl,
+      currentArtist?.albumCover,
+      currentArtist?.album?.cover_medium,
+      currentArtist?.album?.cover_big,
+      currentArtist?.album?.cover_small,
+      currentArtist?.album?.cover_xl,
+      currentArtist?.picture
+    ) || "/images/default-album.png";
+
+  const queueImage =
+    getImageUrl(
+      currentArtist?.albumCover,
+      currentArtist?.album?.cover_medium,
+      currentArtist?.album?.cover_big,
+      currentArtist?.album?.cover_small,
+      currentArtist?.album?.cover_xl,
+      currentTrack?.album?.cover_medium,
+      currentTrack?.album?.cover_big,
+      currentTrack?.album?.cover_small,
+      currentTrack?.album?.cover_xl
+    ) || "/images/default-album.png";
+
   return (
     <div
       id="MusicPlayer"
@@ -252,13 +324,17 @@ const MusicPlayer = () => {
           </div>
           <div className="flex items-center">
             <div className="p-1.5 ml-2 hover:bg-[#5a5a5a] hover:bg-opacity-50 rounded-full cursor-pointer">
-              <MdAdd className="text-white" size={20} />
-            </div>
-            <div className="p-1.5 ml-2 hover:bg-[#5a5a5a] hover:bg-opacity-50 rounded-full cursor-pointer">
-              <MdFavoriteBorder className="text-white" size={20} />
-            </div>
-            <div className="p-1.5 ml-2 hover:bg-[#5a5a5a] hover:bg-opacity-50 rounded-full cursor-pointer">
-              <MdTune className="text-white" size={20} />
+              <FavouriteButton
+                type="track"
+                id={currentTrack?.id}
+                title={currentTrack?.name || currentTrack?.title}
+                subtitle={currentArtist?.name}
+                image={favImage}
+                size={20}
+                className="text-white p-0 m-0 bg-transparent border-0"
+                activeClassName="text-white"
+                inactiveClassName="text-white"
+              />
             </div>
           </div>
         </div>
@@ -319,12 +395,6 @@ const MusicPlayer = () => {
 
       <div className="flex items-center w-1/4 justify-end pr-6">
         <div className="flex items-center">
-          <div className="p-2 ml-2 hover:bg-[#5a5a5a] hover:bg-opacity-50 rounded-full cursor-pointer">
-            <MdPictureInPictureAlt className="text-white" size={17} />
-          </div>
-          <div className="p-2 ml-2 hover:bg-[#5a5a5a] hover:bg-opacity-50 rounded-full cursor-pointer">
-            <MdShuffle className="text-white" size={17} />
-          </div>
           <div
             onMouseEnter={() => setIsVolumeHover(true)}
             onMouseLeave={() => setIsVolumeHover(false)}
@@ -343,15 +413,12 @@ const MusicPlayer = () => {
               </div>
             )}
           </div>
-          <div className="p-2 ml-2 hover:bg-[#5a5a5a] hover:bg-opacity-50 rounded-full cursor-pointer">
-            <MdTune className="text-white" size={17} />
-          </div>
         </div>
         <div className="flex items-center ml-6 border-l border-l-[#363636]">
           <img
             className="rounded-sm ml-6"
             width="28"
-            src={currentArtist?.albumCover}
+            src={queueImage}
             alt="Album cover"
           />
           <div className="text-xs ml-1.5 text-white font-light">Queue</div>

@@ -6,10 +6,10 @@ import {
   MdPlayArrow,
   MdPause,
   MdMoreHoriz,
-  MdFavoriteBorder,
   MdSchedule,
 } from "react-icons/md";
 import { useSong } from "../context/SongContext.jsx";
+import FavouriteButton from "../components/FavouriteButton.jsx";
 import * as musicApi from "../api/music.js";
 
 const AlbumView = () => {
@@ -138,9 +138,28 @@ const AlbumView = () => {
               )}
             </button>
 
-            <button className="rounded-full p-2 border border-[#52525D] hover:bg-[#2b2b30]">
-              <MdFavoriteBorder className="text-[#EAEAEA]" size={20} />
-            </button>
+            {/* Keep wrapper styles; replace icon with FavouriteButton */}
+            <FavouriteButton
+              type="album"
+              id={id}
+              title={albumData.title}
+              subtitle={albumData.artistName}
+              image={
+                albumData.albumCover ||
+                albumData.album?.cover ||
+                albumData.albumCover_medium ||
+                albumData.albumCover?.large ||
+                albumData.album.cover_big || // fallback
+                albumData.album.cover_medium ||
+                albumData.track.album.cover_small ||
+                albumData.track.album.cover_medium ||
+                albumData.track.album.cover // last fallback
+              }
+              size={20}
+              className="rounded-full p-2 border border-[#52525D] hover:bg-[#2b2b30]"
+              activeClassName="text-[#EAEAEA]"
+              inactiveClassName="text-[#EAEAEA]"
+            />
 
             <button className="rounded-full p-2 border border-[#52525D] hover:bg-[#2b2b30]">
               <MdMoreHoriz className="text-[#EAEAEA]" size={20} />
