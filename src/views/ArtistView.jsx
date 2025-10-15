@@ -1,13 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import SongRow from "../components/SongRow.jsx";
-import {
-  MdSearch,
-  MdPlayArrow,
-  MdPause,
-  MdMoreHoriz,
-  MdSchedule,
-} from "react-icons/md";
+import { MdSearch, MdPlayArrow, MdPause, MdSchedule } from "react-icons/md";
 import { useSong } from "../context/SongContext.jsx";
 import FavouriteButton from "../components/FavouriteButton.jsx";
 import * as musicApi from "../api/music.js";
@@ -134,12 +128,12 @@ const ArtistView = () => {
         <ul className="flex items-center justify-start w-full text-[#ffffff] h-9 border-b border-b-[#ffffff] pb-[8px]">
           <li className="pr-10">
             <button className="font-light cursor-pointer text-[#ceccccb3] hover:text-[#ffffff] border-b-2 border-b-transparent hover:border-b-[#ffffff]">
-              Discography
+              Discogs
             </button>
           </li>
           <li className="pr-10">
             <button className="font-semibold cursor-pointer text-[#ffffff] border-b-2 border-b-[#ffffff]">
-              Top tracks
+              Top hits
             </button>
           </li>
           <li className="pr-10">

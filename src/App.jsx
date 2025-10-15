@@ -25,7 +25,6 @@ import PodcastsView from "./views/PodcastsView.jsx";
 import PodcastView from "./views/PodcastView.jsx";
 import FavouritesView from "./views/FavouritesView.jsx";
 import { FavouritesProvider } from "./context/FavouritesContext.jsx";
-
 import { SongProvider, useSong } from "./context/SongContext.jsx";
 
 const AppContent = () => {
@@ -88,7 +87,6 @@ const AppContent = () => {
   return (
     <Router>
       <div>
-        {/* Top Navigation */}
         <div
           id="TopNav"
           className="fixed right-0 flex items-center justify-between w-[calc(100%-240px)] h-[56px] shadow-lg hover:shadow-2xl hover:scale-x-[1.02] transition-all duration-300 ease-in-out z-40 origin-left"
@@ -106,7 +104,6 @@ const AppContent = () => {
           </div>
         </div>
 
-        {/* Side Navigation */}
         <div
           id="SideNav"
           className="fixed w-[240px] bg-[#0ea5e9] h-[100vh] shadow-lg hover:shadow-2xl hover:scale-x-[1.02] transition-all duration-300 ease-in-out z-40 origin-left"
@@ -154,7 +151,6 @@ const AppContent = () => {
           />
         </div>
 
-        {/* Main Content */}
         <div
           id="MainContent"
           className="fixed w-[calc(100%-240px)] h-[calc(100%-56px)] ml-[240px] mt-[56px] overflow-x-auto shadow-lg hover:shadow-2xl hover:scale-x-[1.02] transition-all duration-300 ease-in-out z-40 origin-left"
@@ -176,7 +172,6 @@ const AppContent = () => {
           </Routes>
         </div>
 
-        {/* Scroll Up Button */}
         {showScrollUp && (
           <button
             onClick={scrollUp}
@@ -186,7 +181,6 @@ const AppContent = () => {
           </button>
         )}
 
-        {/* Scroll Down Button */}
         {showScrollDown && (
           <button
             onClick={scrollDown}
@@ -196,7 +190,6 @@ const AppContent = () => {
           </button>
         )}
 
-        {/* Music Player */}
         {currentTrack && <MusicPlayer />}
       </div>
     </Router>

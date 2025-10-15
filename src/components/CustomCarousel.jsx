@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { MdChevronLeft, MdChevronRight } from "react-icons/md";
 import useEmblaCarousel from "embla-carousel-react";
 import SliderItem from "./SliderItem.jsx";
+import GenreItem from "./GenreItem.jsx";
 
 const CustomCarousel = ({ category, data, type }) => {
   const [isHoverCategory, setIsHoverCategory] = useState(false);
@@ -20,7 +21,6 @@ const CustomCarousel = ({ category, data, type }) => {
     if (emblaApi) emblaApi.scrollNext();
   }, [emblaApi]);
 
-  // Generate correct route based on type
   const getSlideLink = (slide) => {
     switch (type) {
       case "track":
@@ -33,15 +33,23 @@ const CustomCarousel = ({ category, data, type }) => {
         return `/playlist/${slide.id}`;
       case "podcast":
         return `/podcast/${slide.id}`;
+      case "genre":
+        return `/genre/${slide.id}`;
       default:
         return "/";
     }
   };
 
+  const renderSlideItem = (slide) => {
+    if (type === "genre") {
+      return <GenreItem slide={slide} />;
+    }
+    return <SliderItem slide={slide} />;
+  };
+
   return (
     <div>
       <div className="flex justify-between pb-5 ml-8 mr-6">
-        {/* Category section */}
         <div
           onMouseEnter={() => setIsHoverCategory(true)}
           onMouseLeave={() => setIsHoverCategory(false)}
@@ -58,7 +66,6 @@ const CustomCarousel = ({ category, data, type }) => {
           />
         </div>
 
-        {/* Chevron buttons */}
         <div className="flex items-center">
           <button
             onClick={scrollPrev}
@@ -93,9 +100,7 @@ const CustomCarousel = ({ category, data, type }) => {
                 className="flex-[0_0_25%] min-w-0 flex items-baseline"
               >
                 <Link to={getSlideLink(slide)}>
-                  <div className="text-[#0ea5e9]">
-                    <SliderItem slide={slide} />
-                  </div>
+                  <div className="text-[#0ea5e9]">{renderSlideItem(slide)}</div>
                 </Link>
               </div>
             ))}

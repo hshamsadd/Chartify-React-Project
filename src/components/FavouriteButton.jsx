@@ -33,7 +33,6 @@ const defaultMappers = {
 };
 
 export default function FavouriteButton({
-  // Provide one of: fav OR (type + item) OR (type + id [+ title/subtitle/image])
   fav,
   type,
   item,
@@ -43,7 +42,7 @@ export default function FavouriteButton({
   image,
   size = 20,
   className = "",
-  activeClassName = "text-red-500",
+  activeClassName = "text-[#0ea5e9]",
   inactiveClassName = "",
   stopPropagation = true,
   onToggle,

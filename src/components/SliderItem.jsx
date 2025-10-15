@@ -53,7 +53,6 @@ const SliderItem = ({ slide }) => {
   const imgUrl =
     slide.cover || slide.picture || slide.url || "/images/default.png";
 
-  // infer a type for favourites
   const resolvedType =
     slide.type ||
     (slide.preview || slide.path || slide.title
@@ -64,7 +63,6 @@ const SliderItem = ({ slide }) => {
       ? "artist"
       : "album");
 
-  // Use a stable fallback id when slide.id is missing to make toggle reliable
   const fav = {
     id:
       slide.id ??
@@ -83,11 +81,11 @@ const SliderItem = ({ slide }) => {
       onMouseEnter={() => setIsHover(true)}
       onMouseLeave={() => setIsHover(false)}
     >
-      <div className="relative">
+      <div className="relative shadow-lg hover:shadow-2xl hover:scale-x-[1.02] transition-all duration-300 ease-in-out z-40 origin-left">
         <div
           className={`absolute w-full h-full bg-black z-10 rounded-md transition ${
             isHover
-              ? "ease-in duration-150 bg-opacity-30"
+              ? "ease-in duration-150 bg-opacity-25"
               : "ease-out duration-150 bg-opacity-5"
           }`}
         />
@@ -98,7 +96,6 @@ const SliderItem = ({ slide }) => {
           <MdPlayArrow size={27} />
         </div>
 
-        {/* Favourite button: identical circular shape, positioned bottom-right */}
         <div
           className={`absolute z-50 bottom-3 right-3 rounded-full bg-white p-1.5 cursor-pointer transition w-10 h-10 flex items-center justify-center ${
             isHover
@@ -122,13 +119,6 @@ const SliderItem = ({ slide }) => {
             }`}
           />
         </div>
-
-        <img
-          width="25"
-          className="absolute z-40 right-0 bottom-0 pb-3 mr-3 contrast-[1.4] brightness-[1.1]"
-          src="/images/deezer-sound-icon.png"
-          alt="Deezer Sound"
-        />
         <img className="rounded-md aspect-square" src={imgUrl} alt={title} />
       </div>
 

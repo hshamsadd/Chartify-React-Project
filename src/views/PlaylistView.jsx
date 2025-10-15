@@ -112,7 +112,6 @@ const PlaylistView = () => {
 
       <div className="mb-10"></div>
 
-      {/* Tracks Section */}
       <div
         id="SongsSection"
         className="max-w-[1500px] mx-auto max-h-[calc(100vh-200px)]"
@@ -139,7 +138,6 @@ const PlaylistView = () => {
           <MdSchedule className="text-[#ffffff]" size={20} />
         </div>
 
-        {/* Track rows */}
         <ul className="w-850 mx-8 pr-16 min-w-[650px]">
           {playlistData.tracks.map((track) => (
             <SongRow key={track.id} track={track} artistData={playlistData} />

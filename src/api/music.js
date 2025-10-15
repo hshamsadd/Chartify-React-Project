@@ -2,20 +2,16 @@ const DEEZER_API_BASE = "/api/deezer";
 
 export { DEEZER_API_BASE };
 
-// Simple in-memory cache
 const cache = new Map();
-const CACHE_DURATION = 1 * 60 * 1000; // 1 minute
+const CACHE_DURATION = 1 * 60 * 1000;
 
 const fetchJson = async (url) => {
-  console.log("Fetching URL:", url);
   const cached = cache.get(url);
   if (cached && Date.now() - cached.timestamp < CACHE_DURATION) {
-    console.log("Using cached data for:", url);
     return cached.data;
   }
 
   try {
-    console.log("Making fetch request to:", url);
     const response = await fetch(url);
     if (!response.ok) {
       throw new Error(`HTTP ${response.status}: ${response.statusText}`);
@@ -30,12 +26,11 @@ const fetchJson = async (url) => {
   }
 };
 
-// ---------------- Top Chart Normalizers ----------------
 const normalizeTopChartTrack = (track) => ({
   type: "track",
   id: track.id,
   title: track.title,
-  name: track.title, // add name so the player UI has a track.name
+  name: track.title,
   link: track.link,
   duration: track.duration ?? null,
   rank: track.rank ?? null,
@@ -125,7 +120,7 @@ const normalizeTopChartArtist = (artist) => ({
     null,
   position: artist.position ?? null,
   radio: artist.radio ?? false,
-  tracklist: artist.tracklist, // Deezer API endpoint for artist's top tracks
+  tracklist: artist.tracklist,
 });
 
 const normalizeTopChartPlaylist = (playlist) => ({
@@ -174,8 +169,6 @@ const normalizeTopChartPodcast = (podcast) => ({
   available_podcasts: true,
 });
 
-// ---------------- Deezer Normalizers ----------------
-// Normalizer for individual Deezer track (used in multiple places)
 const normalizeDeezerTrack = (track) => ({
   type: "track",
   id: track.id,
@@ -197,13 +190,12 @@ const normalizeDeezerTrack = (track) => ({
   rank: track.rank,
   explicit: track.explicit_lyrics,
   preview: track.preview,
-  path: track.preview, // used by the player
+  path: track.preview,
   position: track.position,
   cover: track.album?.cover_medium || track.artist?.picture_medium || null,
   release_date: track.release_date || null,
 });
 
-// Accept an optional topTracks parameter
 export const normalizeDeezerArtist = (artist, topTracks = []) => ({
   type: "artist",
   id: artist.id,
@@ -218,7 +210,6 @@ export const normalizeDeezerArtist = (artist, topTracks = []) => ({
   nb_fan: artist.nb_fan,
   nb_albums: artist.nb_album,
   position: artist.position ?? null,
-  // Use the pre-fetched topTracks if available
   top_tracks: topTracks.map(normalizeDeezerTrack) || [],
 });
 
@@ -248,7 +239,6 @@ export const normalizeDeezerAlbum = (album) => ({
   tracks: album.tracks?.data?.map(normalizeDeezerTrack) || [],
 });
 
-// Normalizer for individual Deezer playlist (used in playlist fetcher)
 const normalizeDeezerPlaylist = (playlist) => ({
   type: "playlist",
   id: playlist.id,
@@ -272,7 +262,6 @@ const normalizeDeezerPlaylist = (playlist) => ({
   tracks: playlist.tracks?.data?.map(normalizeDeezerTrack) || [],
 });
 
-// ---------------- Genre Normalizers ----------------
 export const normalizeGenre = (genre) => ({
   id: genre.id,
   name: genre.name,
@@ -308,10 +297,7 @@ export const normalizeTopChartRadio = (radio) => ({
   tracklist: radio.tracklist,
   type: radio.type,
 });
-// ---------------- Genre Normalizers ----------------
 
-// ---------------- Top Chart Fetchers ----------------
-// Fetch the full chart using Top Chart normalizers
 export const getChart = async () => {
   const data = await fetchJson(`${DEEZER_API_BASE}/chart`);
   return {
@@ -323,48 +309,41 @@ export const getChart = async () => {
   };
 };
 
-// Fetch only top tracks directly
 export const getTopTracks = async (limit = 10) => {
   const data = await fetchJson(`${DEEZER_API_BASE}/chart/0/tracks`);
   if (!data?.tracks?.data) throw new Error("No top tracks found");
   return data.tracks.data.slice(0, limit).map(normalizeTopChartTrack);
 };
 
-// Fetch only top albums directly
 export const getTopAlbums = async (limit = 10) => {
   const data = await fetchJson(`${DEEZER_API_BASE}/chart/0/albums`);
   if (!data?.albums?.data) throw new Error("No top albums found");
   return data.albums.data.slice(0, limit).map(normalizeTopChartAlbum);
 };
 
-// Fetch album details
 export const getAlbum = async (albumId) => {
   const data = await fetchJson(`${DEEZER_API_BASE}/album/${albumId}`);
   return normalizeDeezerAlbum(data);
 };
 
-// Fetch album tracks
 export const getAlbumTracks = async (albumId) => {
   const data = await fetchJson(`${DEEZER_API_BASE}/album/${albumId}/tracks`);
   if (!data?.data) throw new Error("No tracks found for this album");
   return data.data.map(normalizeDeezerTrack);
 };
 
-// Fetch only top artists directly
 export const getTopArtists = async (limit = 10) => {
   const data = await fetchJson(`${DEEZER_API_BASE}/chart/0/artists`);
   if (!data?.artists?.data) throw new Error("No top artists found");
   return data.artists.data.slice(0, limit).map(normalizeTopChartArtist);
 };
 
-// Fetch Artist details by ID
 export const getArtist = async (artistId) => {
   if (!artistId) throw new Error("Artist ID is required");
   const data = await fetchJson(`${DEEZER_API_BASE}/artist/${artistId}`);
   return normalizeDeezerArtist(data);
 };
 
-// Fetch Artist top tracks by artist ID
 export const getArtistTopTracks = async (artistId, limit = 10) => {
   if (!artistId) throw new Error("Artist ID is required");
   const data = await fetchJson(
@@ -374,14 +353,12 @@ export const getArtistTopTracks = async (artistId, limit = 10) => {
   return data.tracks.data.map(normalizeDeezerTrack);
 };
 
-// Fetch only top playlists directly
 export const getTopPlaylists = async (limit = 10) => {
   const data = await fetchJson(`${DEEZER_API_BASE}/chart/0/playlists`);
   if (!data?.playlists?.data) throw new Error("No top playlists found");
   return data.playlists.data.slice(0, limit).map(normalizeTopChartPlaylist);
 };
 
-// Fetch only top podcasts directly
 const getTopPodcasts = async (limit = 10) => {
   const data = await fetchJson(`${DEEZER_API_BASE}/chart/podcasts`);
   if (!data?.podcasts?.data) throw new Error("No top podcasts found");
@@ -393,28 +370,23 @@ const getPodcast = async (podcastId) => {
   return normalizeTopChartPodcast(data);
 };
 
-// Fetch playlist details by ID
 export const getPlaylist = async (playlistId) => {
   if (!playlistId) throw new Error("Playlist ID is required");
   const data = await fetchJson(`${DEEZER_API_BASE}/playlist/${playlistId}`);
   return normalizeDeezerPlaylist(data);
 };
 
-// ---------------- Genre Fetchers ----------------
-// 1️⃣ Get all genres
 export const getGenres = async () => {
   const data = await fetchJson(`${DEEZER_API_BASE}/genre`);
   return data.data?.map(normalizeGenre) || [];
 };
 
-// 2️⃣ Get genre details by ID
 export const getGenre = async (genreId) => {
   if (!genreId) throw new Error("Genre ID is required");
   const data = await fetchJson(`${DEEZER_API_BASE}/genre/${genreId}`);
   return normalizeGenre(data);
 };
 
-// 3️⃣ Get top artists & radios by genre
 export const getGenreTop = async (genreId) => {
   if (!genreId) throw new Error("Genre ID is required");
 
@@ -428,26 +400,21 @@ export const getGenreTop = async (genreId) => {
     radios: radios.data?.map(normalizeTopChartRadio) || [],
   };
 };
-// ---------------- Genre Fetchers ----------------
-// Fetch artist details + top tracks in one go
+
 export const getArtistWithTopTracks = async (artistId, limit = 10) => {
   if (!artistId) throw new Error("Artist ID is required");
 
-  // 1. Fetch artist details
   const artistData = await fetchJson(`${DEEZER_API_BASE}/artist/${artistId}`);
 
-  // 2. Fetch top tracks
   const topTracksData = await fetchJson(
     `${DEEZER_API_BASE}/artist/${artistId}/top?limit=${limit}`
   );
 
   const topTracks = topTracksData?.data || [];
 
-  // 3. Normalize artist with top tracks
   return normalizeDeezerArtist(artistData, topTracks);
 };
 
-// Fetch a track by ID with normalized info
 export const getTrack = async (trackId) => {
   if (!trackId) throw new Error("Track ID is required");
 
@@ -455,7 +422,7 @@ export const getTrack = async (trackId) => {
 
   return normalizeDeezerTrack(trackData);
 };
-// ---------------- Exports ----------------
+
 export {
   fetchJson,
   normalizeTopChartTrack,

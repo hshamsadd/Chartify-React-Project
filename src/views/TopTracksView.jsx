@@ -26,10 +26,8 @@ const TopTrackView = () => {
 
       setLoading(true);
       try {
-        // Fetch the track itself
         const track = await musicApi.getTrack(id);
 
-        // Try to fetch artist top tracks
         let topTracks = [];
         if (track.artist?.id) {
           try {
@@ -39,7 +37,6 @@ const TopTrackView = () => {
           }
         }
 
-        // Always show at least the clicked track
         const tracksToShow =
           topTracks.length > 0
             ? topTracks.map((t, index) => ({

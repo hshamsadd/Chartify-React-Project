@@ -17,9 +17,7 @@ const SongRow = ({ track, artistData }) => {
   const [isTrackTime, setIsTrackTime] = useState("00:00");
 
   useEffect(() => {
-    console.log("SongRow received track:", track); // Add this
     if (track && track.path) {
-      console.log("Track has path:", track.path); // And this
       const audioMeta = new Audio(track.path);
       audioMeta.addEventListener("loadedmetadata", () => {
         const duration = audioMeta.duration;
@@ -27,12 +25,9 @@ const SongRow = ({ track, artistData }) => {
         const seconds = Math.floor(duration % 60);
         setIsTrackTime(minutes + ":" + seconds.toString().padStart(2, "0"));
       });
-    } else {
-      console.log("Track missing path!"); // Add this too
     }
   }, [track]);
 
-  // Build favourite payload (uses same image fallbacks as the row)
   const coverForFav =
     artistData.albumCover?.medium ||
     artistData.albumCover?.large ||
@@ -42,7 +37,7 @@ const SongRow = ({ track, artistData }) => {
     track?.album?.cover_big?.large ||
     track?.album?.cover_small?.small ||
     track?.album?.cover_xl?.xl ||
-    "/images/default-album.png";
+    "/images/default-album.jpg";
 
   const fav = {
     id:
@@ -98,7 +93,7 @@ const SongRow = ({ track, artistData }) => {
                 className="p-1 mt-[2px] ml-[3px] absolute rounded-full bg-white cursor-pointer"
               >
                 {!isHoverGif ? (
-                  <img src="/images/audio-wave.gif" alt="Audio wave" />
+                  <img src="/images/audio.gif" alt="Audio wave" />
                 ) : (
                   <MdPause size={25} onClick={playOrPauseSong} />
                 )}
@@ -109,18 +104,15 @@ const SongRow = ({ track, artistData }) => {
             width="45"
             className="border border-[#ffffff]"
             src={
-              // Track-specific album covers
               artistData.albumCover?.medium ||
               artistData.albumCover?.large ||
               artistData.cover ||
-              // Fallback to track's album cover if available
               artistData.albumCover ||
               track.album?.cover_medium?.medium ||
               track.album?.cover_big?.large ||
               track.album?.cover_small?.small ||
               track.album?.cover_xl?.xl ||
-              // Fallback: a default image if nothing is found
-              "/images/default-album.png"
+              "/images/default-album.jpg"
             }
             alt={track.name || "Album cover"}
           />
@@ -140,7 +132,6 @@ const SongRow = ({ track, artistData }) => {
       </div>
 
       <div className="flex items-center">
-        {/* Favourite button kept intact */}
         <FavouriteButton
           fav={fav}
           size={21}

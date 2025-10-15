@@ -1,4 +1,3 @@
-// src/views/GenreView.jsx
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { getGenre, getGenreTop } from "../api/music";
@@ -38,7 +37,6 @@ const GenreView = () => {
   if (error) return <div className="text-red-500 p-8">{error}</div>;
   if (!genre) return <div className="text-white p-8">No genre data found</div>;
 
-  // Transform artists data to match SliderItem format
   const formattedArtists = artists.map((artist) => ({
     id: artist.id,
     cover:
@@ -56,7 +54,6 @@ const GenreView = () => {
     type: "artist",
   }));
 
-  // Transform radios data to match SliderItem format
   const formattedRadios = radios.map((radio) => ({
     id: radio.id,
     cover:
@@ -70,7 +67,6 @@ const GenreView = () => {
 
   return (
     <div>
-      {/* ---------- Genre Header ---------- */}
       <div className="relative h-[280px] w-full overflow-hidden">
         <img
           src={
@@ -89,7 +85,6 @@ const GenreView = () => {
         </div>
       </div>
 
-      {/* ---------- Top Artists ---------- */}
       {formattedArtists.length > 0 && (
         <div className="text-[#0ea5e9]">
           <CustomCarousel
@@ -100,7 +95,6 @@ const GenreView = () => {
         </div>
       )}
 
-      {/* ---------- Top Radios ---------- */}
       {formattedRadios.length > 0 && (
         <div className="text-[#0ea5e9]">
           <CustomCarousel

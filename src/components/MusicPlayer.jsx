@@ -13,7 +13,6 @@ import uniqolor from "uniqolor";
 import { useSong } from "../context/SongContext.jsx";
 import FavouriteButton from "./FavouriteButton.jsx";
 
-// Image resolver (only normalizes image/cover objects into a URL; no style changes)
 const getImageUrl = (...candidates) => {
   const sizeOrder = ["medium", "large", "xl", "small"];
 
@@ -21,17 +20,14 @@ const getImageUrl = (...candidates) => {
     if (!c) return undefined;
     if (typeof c === "string") return c;
 
-    // Common direct keys that may already be URL strings
     for (const k of ["cover", "picture", "image", "albumCover", "url", "src"]) {
       if (typeof c[k] === "string") return c[k];
     }
 
-    // Deezer-style size maps: { small, medium, large, xl }
     for (const k of sizeOrder) {
       if (typeof c[k] === "string") return c[k];
     }
 
-    // Deezer album keys may be string or nested objects
     for (const k of ["cover_small", "cover_medium", "cover_big", "cover_xl"]) {
       const v = c[k];
       if (!v) continue;
@@ -39,7 +35,6 @@ const getImageUrl = (...candidates) => {
       if (nested) return nested;
     }
 
-    // Sometimes nested under album/artist
     for (const k of ["album", "artist"]) {
       const v = c[k];
       if (!v) continue;
@@ -47,7 +42,6 @@ const getImageUrl = (...candidates) => {
       if (nested) return nested;
     }
 
-    // Fallback: first string value found
     for (const v of Object.values(c)) {
       if (typeof v === "string") return v;
     }
@@ -75,7 +69,6 @@ const MusicPlayer = () => {
     setTrackTime,
   } = useSong();
 
-  // Create a stable callback for nextSong to avoid infinite loops
   const handleNextSong = useCallback(() => {
     if (currentTrack) {
       nextSong(currentTrack);
@@ -102,12 +95,11 @@ const MusicPlayer = () => {
         const dur = Number(audio.duration);
         const cur = Number(audio.currentTime);
         if (!isFinite(dur) || dur <= 0 || !isFinite(cur) || cur < 0) {
-          return; // avoid NaN and invalid states
+          return;
         }
         const minutes = Math.floor(cur / 60);
         const seconds = Math.floor(cur - minutes * 60);
         const currentTime = minutes + ":" + seconds.toString().padStart(2, "0");
-        // only update when changed to avoid render storms
         setIsTrackTimeCurrent((prev) =>
           prev === currentTime ? prev : currentTime
         );
@@ -207,7 +199,6 @@ const MusicPlayer = () => {
     }
   }, [isTrackTimeCurrent, isTrackTimeTotal, handleNextSong]);
 
-  // Reset the trigger when track changes
   useEffect(() => {
     hasTriggeredNext.current = false;
   }, [currentTrack?.id]);
@@ -222,7 +213,6 @@ const MusicPlayer = () => {
     return null;
   }
 
-  // Only resolve image URLs (no style/layout changes)
   const favImage =
     getImageUrl(
       currentTrack?.albumCover,
@@ -237,7 +227,7 @@ const MusicPlayer = () => {
       currentArtist?.album?.cover_small,
       currentArtist?.album?.cover_xl,
       currentArtist?.picture
-    ) || "/images/default-album.png";
+    ) || "/images/default-album.jpg";
 
   const queueImage =
     getImageUrl(
@@ -250,7 +240,7 @@ const MusicPlayer = () => {
       currentTrack?.album?.cover_big,
       currentTrack?.album?.cover_small,
       currentTrack?.album?.cover_xl
-    ) || "/images/default-album.png";
+    ) || "/images/default-album.jpg";
 
   return (
     <div

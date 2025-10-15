@@ -22,7 +22,6 @@ const AlbumView = () => {
       try {
         const album = await musicApi.getAlbum(id);
 
-        // Fetch tracks
         let tracks = [];
         try {
           tracks = await musicApi.getAlbumTracks(id);
@@ -30,7 +29,6 @@ const AlbumView = () => {
           console.warn("No tracks found for this album:", err);
         }
 
-        // Normalize tracks with their own album covers
         const tracksToShow = tracks.map((t, index) => ({
           ...t,
           id: index + 1,
@@ -157,7 +155,6 @@ const AlbumView = () => {
 
       <div className="mb-10"></div>
 
-      {/* Tracks Section */}
       <div
         id="SongsSection"
         className="max-w-[1500px] mx-auto max-h-[calc(100vh-200px)]"

@@ -1,7 +1,6 @@
 import * as musicApi from "./music.js";
 import { DEEZER_API_BASE } from "./music.js";
 
-// Search types
 export const SEARCH_TYPES = {
   ALL: "all",
   TRACK: "track",
@@ -10,7 +9,6 @@ export const SEARCH_TYPES = {
   PLAYLIST: "playlist",
 };
 
-// Search order options
 export const SEARCH_ORDERS = {
   RANKING: "RANKING",
   TRACK_ASC: "TRACK_ASC",
@@ -25,16 +23,6 @@ export const SEARCH_ORDERS = {
   DURATION_DESC: "DURATION_DESC",
 };
 
-/**
- * General search function that searches across all content types
- * @param {string} query - Search query
- * @param {Object} options - Search options
- * @param {string} options.type - Search type (all, track, artist, album, playlist)
- * @param {boolean} options.strict - Enable strict mode
- * @param {string} options.order - Sort order
- * @param {number} options.limit - Number of results to return
- * @returns {Promise<Object>} Search results
- */
 export const search = async (query, options = {}) => {
   const {
     type = SEARCH_TYPES.ALL,
@@ -49,23 +37,18 @@ export const search = async (query, options = {}) => {
 
   let searchQuery = query.trim();
 
-  // Build the search URL
   let url = `${DEEZER_API_BASE}/search`;
 
-  // Add query parameter
   url += `?q=${encodeURIComponent(searchQuery)}`;
 
-  // Add strict parameter if enabled
   if (strict) {
     url += `&strict=on`;
   }
 
-  // Add order parameter
   if (order !== SEARCH_ORDERS.RANKING) {
     url += `&order=${order}`;
   }
 
-  // Add limit
   url += `&limit=${limit}`;
 
   try {
@@ -77,64 +60,26 @@ export const search = async (query, options = {}) => {
   }
 };
 
-/**
- * Search for tracks specifically
- * @param {string} query - Search query
- * @param {Object} options - Search options
- * @returns {Promise<Array>} Array of normalized tracks
- */
 export const searchTracks = async (query, options = {}) => {
   const data = await search(query, { ...options, type: SEARCH_TYPES.TRACK });
   return data.data.map(musicApi.normalizeDeezerTrack);
 };
 
-/**
- * Search for artists specifically
- * @param {string} query - Search query
- * @param {Object} options - Search options
- * @returns {Promise<Array>} Array of normalized artists
- */
 export const searchArtists = async (query, options = {}) => {
   const data = await search(query, { ...options, type: SEARCH_TYPES.ARTIST });
   return data.data.map(musicApi.normalizeDeezerArtist);
 };
 
-/**
- * Search for albums specifically
- * @param {string} query - Search query
- * @param {Object} options - Search options
- * @returns {Promise<Array>} Array of normalized albums
- */
 export const searchAlbums = async (query, options = {}) => {
   const data = await search(query, { ...options, type: SEARCH_TYPES.ALBUM });
   return data.data.map(normalizeDeezerAlbum);
 };
 
-/**
- * Search for playlists specifically
- * @param {string} query - Search query
- * @param {Object} options - Search options
- * @returns {Promise<Array>} Array of normalized playlists
- */
 export const searchPlaylists = async (query, options = {}) => {
   const data = await search(query, { ...options, type: SEARCH_TYPES.PLAYLIST });
   return data.data.map(normalizeDeezerPlaylist);
 };
 
-/**
- * Advanced search with specific field targeting
- * @param {Object} criteria - Search criteria
- * @param {string} criteria.artist - Artist name
- * @param {string} criteria.album - Album title
- * @param {string} criteria.track - Track title
- * @param {string} criteria.label - Label name
- * @param {number} criteria.dur_min - Minimum duration in seconds
- * @param {number} criteria.dur_max - Maximum duration in seconds
- * @param {number} criteria.bpm_min - Minimum BPM
- * @param {number} criteria.bpm_max - Maximum BPM
- * @param {Object} options - Additional search options
- * @returns {Promise<Object>} Search results
- */
 export const advancedSearch = async (criteria, options = {}) => {
   const queryParts = [];
 
@@ -171,7 +116,6 @@ export const advancedSearch = async (criteria, options = {}) => {
   return search(query, options);
 };
 
-// Normalization functions for different content types
 const normalizeDeezerAlbum = (album) => ({
   id: album.id,
   title: album.title,

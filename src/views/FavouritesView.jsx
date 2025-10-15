@@ -22,7 +22,6 @@ const routeFor = (f) => {
   }
 };
 
-// Image resolver (only normalizes image/cover objects into a URL; no style changes)
 const getImageUrl = (...candidates) => {
   const sizeOrder = ["medium", "large", "xl", "small"];
 
@@ -90,21 +89,18 @@ const FavouritesView = () => {
                   alt={f.title}
                   src={
                     getImageUrl(
-                      // Prefer explicit image first
                       f.image,
                       f.cover,
                       f.albumCover,
-                      // Album-shaped objects with nested sizes
                       f.album,
                       f.album?.cover_medium,
                       f.album?.cover_big,
                       f.album?.cover_small,
                       f.album?.cover_xl,
-                      // Artist pictures as fallback
                       f.picture,
                       f.artist,
                       f.artist?.picture
-                    ) || "/images/albumCovers/default.jpg"
+                    ) || "/images/albumCovers/Amadeus.jpg"
                   }
                   className="w-60 h-60 object-cover rounded mb-2 hover:scale-105 transition-transform duration-200"
                 />
@@ -116,13 +112,12 @@ const FavouritesView = () => {
                 )}
               </Link>
 
-              {/* Use FavouriteButton instead of text "Remove" */}
               <FavouriteButton
                 fav={f}
                 size={23}
-                className="mt-2 text-white-400 hover:text-red-400 p-0 m-0 bg-transparent border-0"
-                activeClassName="text-white-400 hover:text-red-400"
-                inactiveClassName="text-white-400 hover:text-red-400"
+                className="mt-2 text-red-400 hover:text-white p-0 m-0 bg-transparent border-0"
+                activeClassName="text-red-400 hover:text-white"
+                inactiveClassName="text-red-400 hover:text-white"
               />
             </div>
           ))}
