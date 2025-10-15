@@ -265,9 +265,9 @@ const MusicPlayer = () => {
         w-full
         z-50
         h-[80px]
-        bg-[#23232D]
+        bg-[#ffffff]
         border-t
-        border-t-[#383838]
+        border-t-[#0ea5e9]
       "
     >
       <div className="flex items-center w-2/12">
@@ -282,28 +282,39 @@ const MusicPlayer = () => {
           >
             <MdSkipPrevious
               className={
-                currentTrack?.id === 1 ? "text-[#747474]" : "text-white"
+                currentTrack?.id === 1
+                  ? "text-[#0ea5e9] hover:text-[#0ea5e9] hover:bg-[#ffffff]"
+                  : "text-white hover:text-[#0ea5e9] hover:bg-[#ffffff]"
               }
               size={25}
             />
           </button>
           <button
             type="button"
-            className="p-2 rounded-full hover:bg-[#363636]"
+            className="p-2 rounded-full hover:bg-[#0ea5e9]"
             onClick={() => playOrPauseThisSong(currentArtist, currentTrack)}
           >
             {!isPlaying ? (
-              <MdPlayArrow className="text-white" size={45} />
+              <MdPlayArrow
+                className="text-[#0ea5e9] hover:text-[#ffffff]"
+                size={45}
+              />
             ) : (
-              <MdPause className="text-white" size={45} />
+              <MdPause
+                className="text-[#0ea5e9] hover:text-[#ffffff]"
+                size={45}
+              />
             )}
           </button>
           <button
             type="button"
-            className="mx-2 p-2 rounded-full hover:bg-[#363636]"
+            className="mx-2 p-2 rounded-full hover:bg-[#0ea5e9] "
             onClick={handleNextSong}
           >
-            <MdSkipNext className="text-white" size={25} />
+            <MdSkipNext
+              className="text-[#0ea5e9] hover:text-[#ffffff]"
+              size={25}
+            />
           </button>
         </div>
       </div>
@@ -311,37 +322,35 @@ const MusicPlayer = () => {
       <div className="mb-2.5 w-full max-w-[50%] mx-10">
         <div className="flex items-center justify-between pl-1 relative top-1 mx-7">
           <div className="flex items-center">
-            <div className="bg-[#2E2E39] py-0.5 px-1 text-[10px] text-[#72727D]">
+            <div className="bg-[#0ea5e9] py-0.5 px-1 text-[10px] text-[#ffffff]">
               ALBUM
             </div>
-            <div className="text-white text-[14px] font-[300] ml-3">
+            <div className="text-[#0ea5e9] text-[14px] font-[300] ml-3">
               {currentTrack?.name}
             </div>
-            <div className="text-white relative -top-1 left-[6px]">.</div>
-            <div className="text-white text-[14px] font-[300] ml-3">
+            <div className="text-[#0ea5e9] relative -top-1 left-[6px]">.</div>
+            <div className="text-[#0ea5e9] text-[14px] font-[300] ml-3">
               {currentArtist?.name}
             </div>
           </div>
           <div className="flex items-center">
-            <div className="p-1.5 ml-2 hover:bg-[#5a5a5a] hover:bg-opacity-50 rounded-full cursor-pointer">
-              <FavouriteButton
-                type="track"
-                id={currentTrack?.id}
-                title={currentTrack?.name || currentTrack?.title}
-                subtitle={currentArtist?.name}
-                image={favImage}
-                size={20}
-                className="text-white p-0 m-0 bg-transparent border-0"
-                activeClassName="text-white"
-                inactiveClassName="text-white"
-              />
-            </div>
+            <FavouriteButton
+              type="track"
+              id={currentTrack?.id}
+              title={currentTrack?.name || currentTrack?.title}
+              subtitle={currentArtist?.name}
+              image={favImage}
+              size={20}
+              className="text-[#0ea5e9] p-2 m-0 bg-transparent border-0"
+              activeClassName="text-[#0ea5e9] [&>svg]:fill-none [&>svg]:stroke-[#0ea5e9] [&>svg]:stroke-[1.5] hover:text-[#0ea5e9]"
+              inactiveClassName="text-[#0ea5e9]"
+            />
           </div>
         </div>
 
         <div className="flex items-center">
           {isTrackTimeCurrent && (
-            <div className="text-[#8a8a8a] text-[10px] pr-2 relative -bottom-[5px]">
+            <div className="text-[#0ea5e9] text-[10px] pr-2 relative -bottom-[5px]">
               {isTrackTimeCurrent}
             </div>
           )}
@@ -366,7 +375,7 @@ const MusicPlayer = () => {
                 bg-opacity-100
                 focus:outline-none
                 cursor-pointer
-                ${isHover ? "rangeDot" : "rangeDotHidden"}
+                ${isHover ? "rangeDot" : ""}
               `}
               readOnly
             />
@@ -374,19 +383,19 @@ const MusicPlayer = () => {
               className="pointer-events-none rounded-full absolute z-10 inset-y-0 left-0 w-0"
               style={{
                 width: `${range}%`,
-                backgroundColor: randColor,
+                backgroundColor: "#0ea5e9",
                 height: isHover ? "4px" : "2px",
                 marginTop: isHover ? "5px" : "6px",
               }}
             />
             <div
-              className={`absolute z-[-0] inset-y-0 left-0 w-full bg-[#c4c4c4] rounded-full ${
+              className={`absolute z-[-0] inset-y-0 left-0 w-full bg-[#0ea5e9] rounded-full ${
                 isHover ? "h-[4px] mt-[5px]" : "h-[2px] mt-[6px]"
               }`}
             />
           </div>
           {isTrackTimeTotal && (
-            <div className="text-[#8a8a8a] text-[10px] pl-2 relative -bottom-[5px]">
+            <div className="text-[#0ea5e9] text-[10px] pl-2 relative -bottom-[5px]">
               {isTrackTimeTotal}
             </div>
           )}
@@ -400,28 +409,28 @@ const MusicPlayer = () => {
             onMouseLeave={() => setIsVolumeHover(false)}
             className="relative"
           >
-            <div className="p-2 ml-2 hover:bg-[#5a5a5a] hover:bg-opacity-50 rounded-full cursor-pointer">
+            <div className="p-2 ml-2 hover:bg-[#0ea5e9] hover:bg-opacity-50 rounded-full cursor-pointer">
               {currentVolume > 0 ? (
-                <MdVolumeUp className="text-white" size={17} />
+                <MdVolumeUp className="text-[#0ea5e9]" size={17} />
               ) : (
-                <MdVolumeOff className="text-white" size={17} />
+                <MdVolumeOff className="text-[#0ea5e9]" size={17} />
               )}
             </div>
             {isVolumeHover && (
-              <div className="absolute -top-12 -left-20 p-2 px-4 bg-[#2a2a37] rounded-xl shadow-xl">
+              <div className="absolute -top-12 -left-20 p-2 px-4 bg-[#ffffff]  rounded-xl shadow-xl bg-opacity-60 backdrop-blur-lg">
                 <MusicPlayerVolume />
               </div>
             )}
           </div>
         </div>
-        <div className="flex items-center ml-6 border-l border-l-[#363636]">
+        <div className="flex items-center ml-6 border-l border-l-[#0ea5e9]">
           <img
-            className="rounded-sm ml-6"
+            className="rounded-sm ml-6 border border-[#0ea5e9]"
             width="28"
             src={queueImage}
             alt="Album cover"
           />
-          <div className="text-xs ml-1.5 text-white font-light">Queue</div>
+          <div className="text-xs ml-1.5 text-[#0ea5e9] font-light">Queue</div>
         </div>
       </div>
     </div>

@@ -34,42 +34,52 @@ const CustomCarousel = ({ category, data, type }) => {
       case "podcast":
         return `/podcast/${slide.id}`;
       default:
-        return "#";
+        return "/";
     }
   };
 
   return (
     <div>
       <div className="flex justify-between pb-5 ml-8 mr-6">
-        <Link
+        {/* Category section */}
+        <div
           onMouseEnter={() => setIsHoverCategory(true)}
           onMouseLeave={() => setIsHoverCategory(false)}
           className={`flex items-center font-semibold text-xl cursor-pointer ${
-            isHoverCategory ? "hover:text-[#EF5465]" : "text-white"
+            isHoverCategory ? "text-[#f8f6f6]" : "text-white"
           }`}
         >
           {category}
-          <MdChevronRight
+          <hr
             className={`mt-1 ${
-              isHoverCategory ? "text-[#EF5465]" : "text-white"
+              isHoverCategory ? "text-[#f8f6f6]" : "text-white"
             }`}
             size={25}
           />
-        </Link>
+        </div>
 
+        {/* Chevron buttons */}
         <div className="flex items-center">
           <button
             onClick={scrollPrev}
-            className="rounded-full p-2 hover:bg-[#2b2b2b]"
+            className="group rounded-full p-2 transition-colors duration-200 hover:bg-white"
           >
-            <MdChevronLeft className="text-white" size={30} />
+            <MdChevronLeft
+              size={30}
+              className="text-white transition-colors duration-200 group-hover:text-[#0ea5e9]"
+            />
           </button>
+
           <div className="px-2"></div>
+
           <button
             onClick={scrollNext}
-            className="rounded-full p-2 hover:bg-[#2b2b2b]"
+            className="group rounded-full p-2 transition-colors duration-200 hover:bg-white"
           >
-            <MdChevronRight className="text-white" size={30} />
+            <MdChevronRight
+              size={30}
+              className="text-white transition-colors duration-200 group-hover:text-[#0ea5e9]"
+            />
           </button>
         </div>
       </div>
@@ -83,7 +93,9 @@ const CustomCarousel = ({ category, data, type }) => {
                 className="flex-[0_0_25%] min-w-0 flex items-baseline"
               >
                 <Link to={getSlideLink(slide)}>
-                  <SliderItem slide={slide} />
+                  <div className="text-[#0ea5e9]">
+                    <SliderItem slide={slide} />
+                  </div>
                 </Link>
               </div>
             ))}

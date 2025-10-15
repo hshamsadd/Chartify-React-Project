@@ -11,7 +11,7 @@ const PodcastsView = () => {
     const fetchPodcasts = async () => {
       setLoading(true);
       try {
-        const data = await getTopPodcasts(24); // fetch top 24 podcasts
+        const data = await getTopPodcasts(10);
         setPodcasts(data);
       } catch (err) {
         console.error("Error fetching podcasts:", err);
@@ -30,7 +30,7 @@ const PodcastsView = () => {
   return (
     <div className="p-8">
       <h1 className="text-3xl font-bold text-white mb-6">Podcasts</h1>
-      <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-6">
+      <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-4">
         {podcasts.map((podcast) => (
           <Link
             key={podcast.id}
@@ -41,7 +41,7 @@ const PodcastsView = () => {
               <img
                 src={podcast.cover || "/images/default.png"}
                 alt={podcast.title}
-                className="w-32 h-32 rounded-md object-cover mb-2"
+                className="w-40 h-40 rounded-md object-cover mb-2"
               />
               <p className="text-white text-center">{podcast.title}</p>
             </div>

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { MdMoreHoriz, MdPlayArrow, MdPause } from "react-icons/md";
+import { MdPlayArrow, MdPause } from "react-icons/md";
 import { useSong } from "../context/SongContext.jsx";
 import FavouriteButton from "./FavouriteButton.jsx";
 
@@ -106,8 +106,8 @@ const SongRow = ({ track, artistData }) => {
             )}
 
           <img
-            width="37"
-            className="border border-[#494949]"
+            width="45"
+            className="border border-[#ffffff]"
             src={
               // Track-specific album covers
               artistData.albumCover?.medium ||
@@ -128,10 +128,10 @@ const SongRow = ({ track, artistData }) => {
 
         {track && (
           <div
-            className={`text-sm pl-4 hover:underline cursor-pointer ${
+            className={`text-md pl-4 hover:underline cursor-pointer ${
               track && currentTrack && currentTrack.name === track.name
-                ? "text-[#EF5464]"
-                : "text-[#d4d4d4]"
+                ? "text-[#ffffff]"
+                : "text-[#ffffff]"
             }`}
           >
             {track.name}
@@ -141,26 +141,20 @@ const SongRow = ({ track, artistData }) => {
 
       <div className="flex items-center">
         {/* Favourite button kept intact */}
-        <div className="rounded-full p-1.5 mr-3 hover:bg-[#979797] hover:bg-opacity-20 cursor-pointer">
-          <FavouriteButton
-            fav={fav}
-            size={21}
-            className="p-0 m-0 bg-transparent border-0"
-            activeClassName="text-[#CCCCCC]"
-            inactiveClassName="text-[#CCCCCC]"
-          />
-        </div>
-
-        <div className="rounded-full p-1.5 hover:bg-[#979797] hover:bg-opacity-20 cursor-pointer">
-          <MdMoreHoriz className="text-[#CCCCCC]" size={21} />
-        </div>
+        <FavouriteButton
+          fav={fav}
+          size={21}
+          className="rounded-full p-1.5 bg-[#FFFFFF] border-2 border-[#0ea5e9]"
+          activeClassName="text-[#0ea5e9]"
+          inactiveClassName="[&>svg]:fill-none [&>svg]:stroke-[#0ea5e9] [&>svg]:stroke-[1.5] hover:text-[#0ea5e9]"
+        />
 
         {isTrackTime && (
           <div
             className={`text-[13px] pl-10 font-[200] ${
               track && currentTrack && currentTrack.name === track.name
-                ? "text-[#EF5464]"
-                : "text-[#d4d4d4]"
+                ? "text-[#ffffff]"
+                : "text-[#ffffff]"
             }`}
           >
             {isTrackTime}

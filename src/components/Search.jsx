@@ -36,9 +36,12 @@ const Search = () => {
   }, [query, navigate, location.pathname]);
 
   return (
-    <div className="relative">
+    <div className="relative w-full">
       <div className="flex items-center w-full">
-        <MdSearch className="pl-6 mt-1 pr-2 text-[#7E7E88]" size={22} />
+        <MdSearch
+          className="pl-45 mt-45 pr-2 text-[#ffffff] flex-shrink-0"
+          size={35}
+        />
         <input
           ref={inputRef}
           className="
@@ -46,12 +49,12 @@ const Search = () => {
             bg-transparent
             outline-none
             font-[300]
-            placeholder-[#BEBEC7]
+            placeholder-[#ffffff]
             text-[#FFFFFF]
             w-full
-            max-w-xl
+            flex-1
           "
-          placeholder="Search for songs, artists, albums..."
+          placeholder="Search for artists, tracks, albums, and more..."
           type="text"
           value={query}
           onChange={(e) => setQuery(e.target.value)}

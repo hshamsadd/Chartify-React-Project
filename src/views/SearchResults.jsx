@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useSearchParams, Link } from "react-router-dom";
-import { MdPlayArrow, MdPerson, MdAlbum, MdQueueMusic } from "react-icons/md";
+import { MdPlayArrow, MdSearch } from "react-icons/md";
 import * as searchApi from "../api/search.js";
 import { useSong } from "../context/SongContext.jsx";
 
@@ -42,8 +42,6 @@ const SearchResults = () => {
   const handlePlayTrack = (track, event) => {
     event.preventDefault();
     event.stopPropagation();
-
-    // Add path for playing
     track.path = track.preview;
 
     const artistData = {
@@ -55,14 +53,12 @@ const SearchResults = () => {
   };
 
   const renderResultItem = (item) => {
-    const type = item.type;
-
-    switch (type) {
+    switch (item.type) {
       case "track":
         return (
           <div
             key={item.id}
-            className="flex items-center justify-between p-4 hover:bg-[#2a2a2a] rounded-lg transition-colors group"
+            className="flex items-center justify-between px-6 py-3 border-b border-b-[#FFFFFF33] hover:bg-[#0ea5e9] hover:text-white rounded-md transition-all"
           >
             <Link
               to={item.artist?.id ? `/artist/${item.artist.id}` : "#"}
@@ -74,20 +70,20 @@ const SearchResults = () => {
                 className="w-12 h-12 rounded mr-4 flex-shrink-0"
               />
               <div className="min-w-0 flex-1">
-                <div className="text-white text-lg font-medium truncate">
+                <div className="text-white font-semibold truncate">
                   {item.title}
                 </div>
-                <div className="text-gray-400 text-sm truncate">
+                <div className="text-[#f0f0f0b3] text-sm truncate">
                   {item.artist.name} • {item.album.title}
                 </div>
               </div>
             </Link>
             <button
               onClick={(e) => handlePlayTrack(item, e)}
-              className="ml-4 p-3 rounded-full bg-green-500 hover:bg-green-600 transition-colors"
+              className="ml-4 p-2.5 rounded-full bg-[#FFFFFF] hover:scale-105 transition-transform"
               title="Play"
             >
-              <MdPlayArrow size={16} className="text-white" />
+              <MdPlayArrow size={20} className="text-[#0ea5e9]" />
             </button>
           </div>
         );
@@ -97,7 +93,7 @@ const SearchResults = () => {
           <Link
             key={item.id}
             to={`/artist/${item.id}`}
-            className="flex items-center p-4 hover:bg-[#2a2a2a] rounded-lg transition-colors"
+            className="flex items-center px-6 py-3 border-b border-b-[#FFFFFF33] hover:bg-[#0ea5e9] hover:text-white rounded-md transition-all"
           >
             <img
               src={item.picture_small}
@@ -105,19 +101,20 @@ const SearchResults = () => {
               className="w-12 h-12 rounded-full mr-4 flex-shrink-0"
             />
             <div className="min-w-0 flex-1">
-              <div className="text-white text-lg font-medium truncate">
+              <div className="text-white font-semibold truncate">
                 {item.name}
               </div>
-              <div className="text-gray-400 text-sm">Artist</div>
+              <div className="text-[#f0f0f0b3] text-sm">Artist</div>
             </div>
           </Link>
         );
 
       case "album":
         return (
-          <div
+          <Link
             key={item.id}
-            className="flex items-center p-4 hover:bg-[#2a2a2a] rounded-lg transition-colors"
+            to={`/album/${item.id}`}
+            className="flex items-center px-6 py-3 border-b border-b-[#FFFFFF33] hover:bg-[#0ea5e9] hover:text-white rounded-md transition-all"
           >
             <img
               src={item.cover_small}
@@ -125,21 +122,21 @@ const SearchResults = () => {
               className="w-12 h-12 rounded mr-4 flex-shrink-0"
             />
             <div className="min-w-0 flex-1">
-              <div className="text-white text-lg font-medium truncate">
+              <div className="text-white font-semibold truncate">
                 {item.title}
               </div>
-              <div className="text-gray-400 text-sm truncate">
+              <div className="text-[#f0f0f0b3] text-sm truncate">
                 {item.artist.name} • Album
               </div>
             </div>
-          </div>
+          </Link>
         );
 
       case "playlist":
         return (
           <div
             key={item.id}
-            className="flex items-center p-4 hover:bg-[#2a2a2a] rounded-lg transition-colors"
+            className="flex items-center px-6 py-3 border-b border-b-[#FFFFFF33] hover:bg-[#0ea5e9] hover:text-white rounded-md transition-all"
           >
             <img
               src={item.picture_small}
@@ -147,10 +144,10 @@ const SearchResults = () => {
               className="w-12 h-12 rounded mr-4 flex-shrink-0"
             />
             <div className="min-w-0 flex-1">
-              <div className="text-white text-lg font-medium truncate">
+              <div className="text-white font-semibold truncate">
                 {item.title}
               </div>
-              <div className="text-gray-400 text-sm truncate">
+              <div className="text-[#f0f0f0b3] text-sm truncate">
                 Playlist • {item.nb_tracks} tracks
               </div>
             </div>
@@ -163,96 +160,77 @@ const SearchResults = () => {
   };
 
   return (
-    <div className="min-h-screen bg-[#121216] text-white">
-      <div className="max-w-4xl mx-auto px-8 py-8">
-        {/* Header */}
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold mb-2">Search Results</h1>
-          {query && (
-            <p className="text-gray-400 text-lg">
-              Showing results for "{query}"
-            </p>
-          )}
-        </div>
-
-        {/* Loading State */}
-        {isLoading && (
-          <div className="flex items-center justify-center py-16">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-white"></div>
-            <span className="ml-4 text-xl">Searching...</span>
-          </div>
-        )}
-
-        {/* Error State */}
-        {error && (
-          <div className="text-center py-16">
-            <div className="text-red-400 text-xl mb-4">{error}</div>
-            <Link
-              to="/"
-              className="text-blue-400 hover:text-blue-300 underline"
-            >
-              Go back to home
-            </Link>
-          </div>
-        )}
-
-        {/* No Query State */}
-        {!query && !isLoading && (
-          <div className="text-center py-16">
-            <div className="text-gray-400 text-xl mb-4">
-              Enter a search term to find music
-            </div>
-            <Link
-              to="/"
-              className="text-blue-400 hover:text-blue-300 underline"
-            >
-              Go back to home
-            </Link>
-          </div>
-        )}
-
-        {/* Results */}
-        {results && results.data && results.data.length > 0 && (
+    <>
+      <div className="max-w-[1500px] mx-auto mt-6 px-8 min-w-[650px]">
+        <div className="flex items-center justify-between">
           <div>
-            <div className="mb-6">
-              <span className="text-gray-400">
-                {results.total} results found
-              </span>
+            <div className="text-white text-3xl font-semibold mb-2">
+              Search Results
             </div>
-
-            <div className="space-y-2">
-              {results.data.map((item) => renderResultItem(item))}
-            </div>
-
-            {results.total > results.data.length && (
-              <div className="text-center mt-8">
-                <div className="text-gray-400">
-                  Showing {results.data.length} of {results.total} results
-                </div>
+            {query && (
+              <div className="text-[#d8d5d5] text-[12px] font-light">
+                Showing results for "{query}"
               </div>
             )}
           </div>
+
+          <div className="flex items-center border border-[#FFFFFF] bg-[#0ea5e9] rounded-sm text-[#ffffff] w-[300px]">
+            <MdSearch className="text-[#ffffff] px-1" size={24} />
+            <input
+              className="w-full py-[5px] bg-[#0ea5e9] text-sm placeholder-[#FFFFFF] outline-none ring-0 hover:ring-0"
+              type="text"
+              value={query}
+              readOnly
+              placeholder="Search..."
+            />
+          </div>
+        </div>
+      </div>
+
+      <div className="mb-6"></div>
+
+      <div
+        id="SearchSection"
+        className="max-w-[1500px] mx-auto max-h-[calc(100vh-200px)]"
+      >
+        {isLoading && (
+          <div className="flex items-center justify-center py-16 text-white">
+            <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-white"></div>
+            <span className="ml-4 text-lg">Searching...</span>
+          </div>
         )}
 
-        {/* No Results */}
-        {results && results.data && results.data.length === 0 && !isLoading && (
-          <div className="text-center py-16">
-            <div className="text-gray-400 text-xl mb-4">
-              No results found for "{query}"
+        {error && (
+          <div className="text-center py-16 text-red-400 text-xl">{error}</div>
+        )}
+
+        {!isLoading && !error && results && results.data?.length > 0 && (
+          <>
+            <div className="flex items-center justify-between min-w-[590px] mx-8 border-b border-b-[#FFFFFF] py-2.5 px-1.5">
+              <div className="text-xs font-light text-[#ffffff]">RESULTS</div>
             </div>
-            <div className="text-gray-500 mb-6">
-              Try searching for artists, songs, albums, or playlists
-            </div>
-            <Link
-              to="/"
-              className="text-blue-400 hover:text-blue-300 underline"
-            >
-              Go back to home
-            </Link>
+
+            <ul className="w-full mx-8 pr-16 min-w-[650px] mt-4 space-y-2">
+              {results.data.map((item) => renderResultItem(item))}
+            </ul>
+
+            {results.total > results.data.length && (
+              <div className="text-center mt-8 text-[#d8d5d5] text-sm">
+                Showing {results.data.length} of {results.total} results
+              </div>
+            )}
+          </>
+        )}
+
+        {results && results.data?.length === 0 && !isLoading && (
+          <div className="text-center py-16 text-[#d8d5d5]">
+            No results found for "{query}"
           </div>
         )}
       </div>
-    </div>
+
+      <div className="mb-40"></div>
+    </>
   );
 };
 

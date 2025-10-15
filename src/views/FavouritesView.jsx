@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import { useFavourites } from "../context/FavouritesContext.jsx";
 import FavouriteButton from "../components/FavouriteButton.jsx";
@@ -13,6 +13,10 @@ const routeFor = (f) => {
       return `/album/${f.id}`;
     case "playlist":
       return `/playlist/${f.id}`;
+    case "podcast":
+      return `/podcast/${f.id}`;
+    case "genres":
+      return `/genres/${f.id}`;
     default:
       return "/";
   }
@@ -63,18 +67,23 @@ const getImageUrl = (...candidates) => {
 
 const FavouritesView = () => {
   const { favourites, removeFavourite } = useFavourites();
+  const [isHover, setIsHover] = useState(false);
 
   return (
-    <div className="p-6 text-white">
+    <div className="p-6 text-[#FFFFFF]">
       <h1 className="text-2xl font-semibold mb-4">Favourites</h1>
       {favourites.length === 0 ? (
         <div className="opacity-70">No favourites yet.</div>
       ) : (
-        <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
+        <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-4 gap-6">
           {favourites.map((f) => (
             <div
               key={`${f.type}:${f.id}`}
-              className="bg-[#23232D] rounded p-3 hover:bg-[#2a2a36] transition"
+              className={`transition ${
+                isHover ? "ease-in duration-150" : "ease-out duration-150"
+              }`}
+              onMouseEnter={() => setIsHover(true)}
+              onMouseLeave={() => setIsHover(false)}
             >
               <Link to={routeFor(f)}>
                 <img
@@ -97,11 +106,11 @@ const FavouritesView = () => {
                       f.artist?.picture
                     ) || "/images/albumCovers/default.jpg"
                   }
-                  className="w-full h-40 object-cover rounded mb-2"
+                  className="w-60 h-60 object-cover rounded mb-2 hover:scale-105 transition-transform duration-200"
                 />
                 <div className="font-medium truncate">{f.title}</div>
                 {f.subtitle && (
-                  <div className="text-sm opacity-70 truncate">
+                  <div className="text-sm opacity-80 truncate">
                     {f.subtitle}
                   </div>
                 )}
@@ -110,10 +119,10 @@ const FavouritesView = () => {
               {/* Use FavouriteButton instead of text "Remove" */}
               <FavouriteButton
                 fav={f}
-                size={18}
-                className="mt-2 text-red-400 hover:text-red-300 p-0 m-0 bg-transparent border-0"
-                activeClassName="text-red-400 hover:text-red-300"
-                inactiveClassName="text-red-400 hover:text-red-300"
+                size={23}
+                className="mt-2 text-white-400 hover:text-red-400 p-0 m-0 bg-transparent border-0"
+                activeClassName="text-white-400 hover:text-red-400"
+                inactiveClassName="text-white-400 hover:text-red-400"
               />
             </div>
           ))}

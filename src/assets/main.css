@@ -3,7 +3,7 @@
 @tailwind utilities;
 
 body {
-  background-color: #121216;
+  background-color: #0ea5e9;
 }
 
 .rangeDotHidden[type="range"]::-webkit-slider-thumb {

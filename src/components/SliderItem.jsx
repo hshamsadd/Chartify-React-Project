@@ -134,10 +134,10 @@ const SliderItem = ({ slide }) => {
 
       <div className="text-white text-left mt-2">
         <div className="text-sm hover:underline">{title}</div>
-        <div className="text-[13px] flex hover:underline text-[#858590] pt-0.5">
+        <div className="text-[13px] flex hover:underline text-[#ffffff] pt-0.5">
           by {creator}
         </div>
-        <div className="text-[11px] pt-0.5 text-[#858590]">
+        <div className="text-[11px] pt-0.5 text-[#ffffff]">
           Released on {releasedOn}
         </div>
       </div>

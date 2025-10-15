@@ -1,7 +1,15 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { BrowserRouter as Router, Routes, Route, Link } from "react-router-dom";
-import { MdOutlineNotificationsActive } from "react-icons/md";
-
+import {
+  MdOutlineNotificationsActive,
+  MdAccountCircle,
+  MdSsidChart,
+  MdMusicNote,
+  MdPodcasts,
+  MdFavorite,
+  MdKeyboardArrowDown,
+  MdKeyboardArrowUp,
+} from "react-icons/md";
 import SideMenuItem from "./components/SideMenuItem.jsx";
 import MusicPlayer from "./components/MusicPlayer.jsx";
 import Search from "./components/Search.jsx";
@@ -22,6 +30,8 @@ import { SongProvider, useSong } from "./context/SongContext.jsx";
 
 const AppContent = () => {
   const { currentTrack, setPlaying, setTrackTime } = useSong();
+  const [showScrollDown, setShowScrollDown] = useState(true);
+  const [showScrollUp, setShowScrollUp] = useState(false);
   useSong();
 
   useEffect(() => {
@@ -29,74 +39,126 @@ const AppContent = () => {
     setTrackTime("0:00");
   }, [setPlaying, setTrackTime]);
 
+  useEffect(() => {
+    const mainContent = document.querySelector("#MainContent");
+
+    const handleScroll = () => {
+      if (mainContent) {
+        const isAtTop = mainContent.scrollTop < 100;
+        const isAtBottom =
+          mainContent.scrollHeight - mainContent.scrollTop <=
+          mainContent.clientHeight + 100;
+
+        setShowScrollDown(!isAtBottom);
+        setShowScrollUp(!isAtTop);
+      }
+    };
+
+    if (mainContent) {
+      mainContent.addEventListener("scroll", handleScroll);
+    }
+
+    return () => {
+      if (mainContent) {
+        mainContent.removeEventListener("scroll", handleScroll);
+      }
+    };
+  }, []);
+
+  const scrollDown = () => {
+    const mainContent = document.querySelector("#MainContent");
+    if (mainContent) {
+      mainContent.scrollBy({
+        top: window.innerHeight - 200,
+        behavior: "smooth",
+      });
+    }
+  };
+
+  const scrollUp = () => {
+    const mainContent = document.querySelector("#MainContent");
+    if (mainContent) {
+      mainContent.scrollBy({
+        top: -(window.innerHeight - 200),
+        behavior: "smooth",
+      });
+    }
+  };
+
   return (
     <Router>
       <div>
         {/* Top Navigation */}
         <div
           id="TopNav"
-          className="fixed right-0 flex items-center justify-between w-[calc(100%-240px)] h-[56px] border-b border-b-[#32323D]"
+          className="fixed right-0 flex items-center justify-between w-[calc(100%-240px)] h-[56px] shadow-lg hover:shadow-2xl hover:scale-x-[1.02] transition-all duration-300 ease-in-out z-40 origin-left"
         >
           <div className="flex items-center w-full">
             <Search />
           </div>
           <div className="flex items-center pr-10">
-            <div className="mr-4 p-1 hover:bg-gray-600 rounded-full cursor-pointer">
-              <MdOutlineNotificationsActive className="text-white" size={20} />
+            <div className="mr-4 p-1 hover:bg-blue-200 hover:bg-opacity-90 text-[#0ea5e9] rounded-full cursor-pointer">
+              <MdOutlineNotificationsActive className="text-white" size={25} />
             </div>
-            <img
-              className="rounded-full w-[33px]"
-              src="https://www.citypng.com/public/uploads/preview/profile-user-round-white-icon-symbol-png-701751695033499brrbuebohc.png"
-              alt="Profile"
-            />
+            <div className="mr-4 p-1 hover:bg-blue-200 hover:bg-opacity-90 text-[#0ea5e9] rounded-full cursor-pointer">
+              <MdAccountCircle className="text-white" size={25} />
+            </div>
           </div>
         </div>
 
         {/* Side Navigation */}
         <div
           id="SideNav"
-          className="fixed w-[240px] bg-[#191922] h-[100vh] border-r border-r-[#32323D]"
+          className="fixed w-[240px] bg-[#0ea5e9] h-[100vh] shadow-lg hover:shadow-2xl hover:scale-x-[1.02] transition-all duration-300 ease-in-out z-40 origin-left"
         >
           <div className="w-full pl-6 pt-3 cursor-pointer">
             <Link to="/charts">
               <img
-                width="130"
-                src="/images/deezer-logo.png"
-                alt="Deezer Logo"
+                width="40"
+                src="/images/audio-wave-512.png"
+                alt="Chartify Logo"
               />
+              <span className="text-white text-xl font-semibold">Chartify</span>
             </Link>
           </div>
 
           <div className="mt-[53px]"></div>
 
           <SideMenuItem
-            iconString="explore"
+            iconString="explore music"
             iconSize={20}
+            icon={<MdSsidChart />}
             pageUrl="/charts"
             name="Music Charts"
           />
           <SideMenuItem
-            iconString="music"
+            iconString="music genres"
             iconSize={20}
+            icon={<MdMusicNote />}
             pageUrl="/genres"
             name="Genres & Moods"
           />
           <SideMenuItem
             iconString="podcast"
             iconSize={20}
+            icon={<MdPodcasts />}
             pageUrl="/podcasts"
             name="Podcasts"
           />
           <SideMenuItem
             iconString="favourite"
             iconSize={20}
+            icon={<MdFavorite />}
             pageUrl="/favourites"
             name="Favourites"
           />
         </div>
 
         {/* Main Content */}
-        <div className="fixed w-[calc(100%-240px)] h-[calc(100%-56px)] ml-[240px] mt-[56px] overflow-x-auto">
+        <div
+          id="MainContent"
+          className="fixed w-[calc(100%-240px)] h-[calc(100%-56px)] ml-[240px] mt-[56px] overflow-x-auto shadow-lg hover:shadow-2xl hover:scale-x-[1.02] transition-all duration-300 ease-in-out z-40 origin-left"
+        >
           <Routes>
             <Route path="/" element={<HomeView />} />
             <Route path="/charts" element={<HomeView />} />
@@ -113,6 +175,26 @@ const AppContent = () => {
             <Route path="/search" element={<SearchResults />} />
           </Routes>
         </div>
+
+        {/* Scroll Up Button */}
+        {showScrollUp && (
+          <button
+            onClick={scrollUp}
+            className="fixed top-24 right-3 bg-[#ffffff] text-[#0ea5e9] p-1 rounded-full shadow-lg hover:shadow-2xl hover:scale-110 transition-all duration-300 ease-in-out z-50"
+          >
+            <MdKeyboardArrowUp size={27} />
+          </button>
+        )}
+
+        {/* Scroll Down Button */}
+        {showScrollDown && (
+          <button
+            onClick={scrollDown}
+            className="fixed bottom-24 right-3 bg-[#ffffff] text-[#0ea5e9] p-1 rounded-full shadow-lg hover:shadow-2xl hover:scale-110 transition-all duration-300 ease-in-out z-50 animate-bounce"
+          >
+            <MdKeyboardArrowDown size={27} />
+          </button>
+        )}
 
         {/* Music Player */}
         {currentTrack && <MusicPlayer />}

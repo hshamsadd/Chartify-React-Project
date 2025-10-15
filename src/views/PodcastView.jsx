@@ -42,13 +42,13 @@ const PodcastView = () => {
         />
         <div>
           <h1 className="text-3xl font-bold text-white">{podcast.title}</h1>
-          <p className="text-gray-400 mt-2">{podcast.description}</p>
-          <p className="text-gray-500 mt-1">{podcast.fans} fans</p>
+          <p className="text-white mt-2">{podcast.description}</p>
+          <p className="text-gray-300 mt-1">{podcast.fans} fans</p>
           <a
             href={podcast.link}
             target="_blank"
             rel="noopener noreferrer"
-            className="text-blue-400 hover:underline"
+            className="text-white hover:underline"
           >
             Listen on Deezer
           </a>
